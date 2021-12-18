@@ -10,8 +10,7 @@ meep:
 	conda install -c conda-forge pymeep
 
 update:
-	pur
-	pur -r requirements_dev.txt
+	poetry update
 
 update-pre:
 	pre-commit autoupdate --bleeding-edge
