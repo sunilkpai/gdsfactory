@@ -37,6 +37,21 @@ L
 
 
 
+add_fidutials
+----------------------------------------------------
+
+.. autofunction:: gdsfactory.components.add_fidutials
+
+.. plot::
+  :include-source:
+
+  import gdsfactory as gf
+
+  c = gf.components.add_fidutials(gap=50)
+  c.plot()
+
+
+
 add_frame
 ----------------------------------------------------
 
@@ -337,6 +352,21 @@ cdc
 
 
 
+cdsem_all
+----------------------------------------------------
+
+.. autofunction:: gdsfactory.components.cdsem_all
+
+.. plot::
+  :include-source:
+
+  import gdsfactory as gf
+
+  c = gf.components.cdsem_all(widths=(0.4, 0.45, 0.5, 0.6, 0.8, 1.0), dense_lines_width=0.3, dense_lines_width_difference=0.02, dense_lines_gap=0.3, dense_lines_labels=('DL', 'DM', 'DH'))
+  c.plot()
+
+
+
 circle
 ----------------------------------------------------
 
@@ -362,7 +392,7 @@ compass
 
   import gdsfactory as gf
 
-  c = gf.components.compass(size=(4.0, 2.0), layer=(1, 0), port_type='electrical')
+  c = gf.components.compass(size=(4.0, 2.0), layer=(1, 0), port_type='electrical', port_inclusion=0.0)
   c.plot()
 
 
@@ -706,7 +736,7 @@ crossing_arm
 
   import gdsfactory as gf
 
-  c = gf.components.crossing_arm(width=0.5, r1=3.0, r2=1.1, w=1.2, L=3.4)
+  c = gf.components.crossing_arm(width=0.5, r1=3.0, r2=1.1, w=1.2, L=3.4, layer_wg=(1, 0), layer_slab=(2, 0))
   c.plot()
 
 
@@ -961,7 +991,22 @@ die_bbox
 
   import gdsfactory as gf
 
-  c = gf.components.die_bbox(street_width=100.0, street_length=1000.0, text_size=100.0, text_location='SW', layer=(49, 0), padding=10.0)
+  c = gf.components.die_bbox(street_width=100.0, street_length=1000.0, text_size=100.0, text_anchor='sw', layer=(49, 0), padding=10.0)
+  c.plot()
+
+
+
+die_bbox_frame
+----------------------------------------------------
+
+.. autofunction:: gdsfactory.components.die_bbox_frame
+
+.. plot::
+  :include-source:
+
+  import gdsfactory as gf
+
+  c = gf.components.die_bbox_frame(bbox=((-1.0, -1.0), (3.0, 4.0)), street_width=100.0, street_length=1000.0, text_size=100.0, text_anchor='sw', layer=(49, 0), padding=10.0)
   c.plot()
 
 
@@ -1022,21 +1067,6 @@ extend_ports
   import gdsfactory as gf
 
   c = gf.components.extend_ports(length=5.0, port_type='optical', centered=False)
-  c.plot()
-
-
-
-extend_ports_list
-----------------------------------------------------
-
-.. autofunction:: gdsfactory.components.extend_ports_list
-
-.. plot::
-  :include-source:
-
-  import gdsfactory as gf
-
-  c = gf.components.extend_ports_list()
   c.plot()
 
 
@@ -1126,7 +1156,7 @@ grating_coupler_elliptical
 
   import gdsfactory as gf
 
-  c = gf.components.grating_coupler_elliptical(polarization='te', taper_length=16.6, taper_angle=40.0, wavelength=1.554, fiber_angle=15.0, grating_line_width=0.343, wg_width=0.5, neff=2.638, nclad=1.443, layer=(1, 0), p_start=26, n_periods=30, big_last_tooth=False, layer_slab=(2, 0), slab_xmin=-1.0, slab_offset=2.0, fiber_marker_width=11.0, fiber_marker_layer=(203, 0), spiked=True)
+  c = gf.components.grating_coupler_elliptical(polarization='te', taper_length=16.6, taper_angle=40.0, wavelength=1.554, fiber_angle=15.0, grating_line_width=0.343, wg_width=0.5, neff=2.638, nclad=1.443, layer=(1, 0), n_periods=30, big_last_tooth=False, layer_slab=(2, 0), slab_xmin=-1.0, slab_offset=2.0, fiber_marker_width=11.0, fiber_marker_layer=(203, 0), spiked=True)
   c.plot()
 
 
@@ -1171,7 +1201,7 @@ grating_coupler_elliptical_te
 
   import gdsfactory as gf
 
-  c = gf.components.grating_coupler_elliptical_te(polarization='te', taper_length=16.6, taper_angle=40.0, wavelength=1.554, fiber_angle=15.0, grating_line_width=0.343, wg_width=0.5, neff=2.638, nclad=1.443, layer=(1, 0), p_start=26, n_periods=30, big_last_tooth=False, layer_slab=(2, 0), slab_xmin=-1.0, slab_offset=2.0, fiber_marker_width=11.0, fiber_marker_layer=(203, 0), spiked=True)
+  c = gf.components.grating_coupler_elliptical_te(polarization='te', taper_length=16.6, taper_angle=40.0, wavelength=1.554, fiber_angle=15.0, grating_line_width=0.343, wg_width=0.5, neff=2.638, nclad=1.443, layer=(1, 0), n_periods=30, big_last_tooth=False, layer_slab=(2, 0), slab_xmin=-1.0, slab_offset=2.0, fiber_marker_width=11.0, fiber_marker_layer=(203, 0), spiked=True)
   c.plot()
 
 
@@ -1186,7 +1216,7 @@ grating_coupler_elliptical_tm
 
   import gdsfactory as gf
 
-  c = gf.components.grating_coupler_elliptical_tm(polarization='tm', taper_length=30, taper_angle=40.0, wavelength=1.554, fiber_angle=15.0, grating_line_width=0.707, wg_width=0.5, neff=1.8, nclad=1.443, layer=(1, 0), p_start=26, n_periods=16, big_last_tooth=False, layer_slab=(2, 0), slab_xmin=-2, slab_offset=2.0, fiber_marker_width=11.0, fiber_marker_layer=(204, 0), spiked=True)
+  c = gf.components.grating_coupler_elliptical_tm(polarization='tm', taper_length=30, taper_angle=40.0, wavelength=1.554, fiber_angle=15.0, grating_line_width=0.707, wg_width=0.5, neff=1.8, nclad=1.443, layer=(1, 0), n_periods=16, big_last_tooth=False, layer_slab=(2, 0), slab_xmin=-2, slab_offset=2.0, fiber_marker_width=11.0, fiber_marker_layer=(204, 0), spiked=True)
   c.plot()
 
 
@@ -1206,17 +1236,47 @@ grating_coupler_elliptical_trenches
 
 
 
-grating_coupler_loss
+grating_coupler_loss_fiber_array
 ----------------------------------------------------
 
-.. autofunction:: gdsfactory.components.grating_coupler_loss
+.. autofunction:: gdsfactory.components.grating_coupler_loss_fiber_array
 
 .. plot::
   :include-source:
 
   import gdsfactory as gf
 
-  c = gf.components.grating_coupler_loss(pitch=127.0)
+  c = gf.components.grating_coupler_loss_fiber_array(pitch=127.0, input_port_indexes=(0, 1))
+  c.plot()
+
+
+
+grating_coupler_loss_fiber_array4
+----------------------------------------------------
+
+.. autofunction:: gdsfactory.components.grating_coupler_loss_fiber_array4
+
+.. plot::
+  :include-source:
+
+  import gdsfactory as gf
+
+  c = gf.components.grating_coupler_loss_fiber_array4(pitch=127.0)
+  c.plot()
+
+
+
+grating_coupler_loss_fiber_single
+----------------------------------------------------
+
+.. autofunction:: gdsfactory.components.grating_coupler_loss_fiber_single
+
+.. plot::
+  :include-source:
+
+  import gdsfactory as gf
+
+  c = gf.components.grating_coupler_loss_fiber_single()
   c.plot()
 
 
@@ -1396,7 +1456,7 @@ loss_deembedding_ch12_34
 
   import gdsfactory as gf
 
-  c = gf.components.loss_deembedding_ch12_34(pitch=127.0, R=10.0, input_port_indexes=(0, 2))
+  c = gf.components.loss_deembedding_ch12_34(pitch=127.0, input_port_indexes=(0, 2))
   c.plot()
 
 
@@ -1411,7 +1471,7 @@ loss_deembedding_ch13_24
 
   import gdsfactory as gf
 
-  c = gf.components.loss_deembedding_ch13_24(pitch=127.0, R=10.0, input_port_indexes=(0, 1))
+  c = gf.components.loss_deembedding_ch13_24(pitch=127.0, input_port_indexes=(0, 1))
   c.plot()
 
 
@@ -1426,22 +1486,7 @@ loss_deembedding_ch14_23
 
   import gdsfactory as gf
 
-  c = gf.components.loss_deembedding_ch14_23(pitch=127.0, R=10.0, input_port_indexes=(0, 1))
-  c.plot()
-
-
-
-manhattan_text
-----------------------------------------------------
-
-.. autofunction:: gdsfactory.components.manhattan_text
-
-.. plot::
-  :include-source:
-
-  import gdsfactory as gf
-
-  c = gf.components.manhattan_text(text='abcd', size=10.0, position=(0.0, 0.0), justify='left', layer=(1, 0))
+  c = gf.components.loss_deembedding_ch14_23(pitch=127.0, input_port_indexes=(0, 1))
   c.plot()
 
 
@@ -1581,6 +1626,21 @@ mzi_lattice
 
 
 
+mzi_pads_center
+----------------------------------------------------
+
+.. autofunction:: gdsfactory.components.mzi_pads_center
+
+.. plot::
+  :include-source:
+
+  import gdsfactory as gf
+
+  c = gf.components.mzi_pads_center(length_x=500, length_y=40, mzi_sig_top='e3', mzi_gnd_top='e2', mzi_sig_bot='e1', mzi_gnd_bot='e4', pad_sig_bot='e1_1_1', pad_sig_top='e3_1_3', pad_gnd_bot='e4_1_2', pad_gnd_top='e2_1_2', delta_length=40.0, end_straight_length=5, start_straight_length=5, metal_route_width=10)
+  c.plot()
+
+
+
 mzi_phase_shifter
 ----------------------------------------------------
 
@@ -1666,7 +1726,7 @@ pad
 
   import gdsfactory as gf
 
-  c = gf.components.pad(size=(100.0, 100.0), layer=(49, 0))
+  c = gf.components.pad(size=(100.0, 100.0), layer=(49, 0), port_inclusion=0)
   c.plot()
 
 
@@ -1727,21 +1787,6 @@ pads_shorted
   import gdsfactory as gf
 
   c = gf.components.pads_shorted(columns=8, pad_spacing=150.0, layer_metal=(49, 0), metal_width=10)
-  c.plot()
-
-
-
-pcm_optical
-----------------------------------------------------
-
-.. autofunction:: gdsfactory.components.pcm_optical
-
-.. plot::
-  :include-source:
-
-  import gdsfactory as gf
-
-  c = gf.components.pcm_optical(widths=(0.4, 0.45, 0.5, 0.6, 0.8, 1.0), dense_lines_width=0.3, dense_lines_width_difference=0.02, dense_lines_gap=0.3, dense_lines_labels=('DL', 'DM', 'DH'), layer=(1, 0), pixel_size=1.0)
   c.plot()
 
 
@@ -1881,6 +1926,21 @@ ring_double
 
 
 
+ring_double_heater
+----------------------------------------------------
+
+.. autofunction:: gdsfactory.components.ring_double_heater
+
+.. plot::
+  :include-source:
+
+  import gdsfactory as gf
+
+  c = gf.components.ring_double_heater(gap=0.2, radius=10.0, length_x=0.01, length_y=0.01, port_orientation=90, contact_offset=(0, 0))
+  c.plot()
+
+
+
 ring_single
 ----------------------------------------------------
 
@@ -1926,6 +1986,21 @@ ring_single_dut
 
 
 
+ring_single_heater
+----------------------------------------------------
+
+.. autofunction:: gdsfactory.components.ring_single_heater
+
+.. plot::
+  :include-source:
+
+  import gdsfactory as gf
+
+  c = gf.components.ring_single_heater(gap=0.2, radius=10.0, length_x=4.0, length_y=0.6, port_orientation=90, contact_offset=(0, 0))
+  c.plot()
+
+
+
 seal_ring
 ----------------------------------------------------
 
@@ -1936,7 +2011,7 @@ seal_ring
 
   import gdsfactory as gf
 
-  c = gf.components.seal_ring(width=10, padding=10.0, with_north=True, with_south=True, with_east=True, with_west=True)
+  c = gf.components.seal_ring(bbox=((-1.0, -1.0), (3.0, 4.0)), width=10, padding=10.0, with_north=True, with_south=True, with_east=True, with_west=True)
   c.plot()
 
 
@@ -2101,7 +2176,7 @@ straight_heater_doped_rib
 
   import gdsfactory as gf
 
-  c = gf.components.straight_heater_doped_rib(length=320.0, nsections=3, contact_metal_size=(10.0, 10.0), contact_size=(10.0, 10.0), heater_width=2.0, heater_gap=0.8, width=0.5, with_top_contact=True, with_bot_contact=True)
+  c = gf.components.straight_heater_doped_rib(length=320.0, nsections=3, contact_metal_size=(10.0, 10.0), contact_size=(10.0, 10.0), with_taper1=True, with_taper2=True, heater_width=2.0, heater_gap=0.8, contact_gap=0.0, width=0.5, with_top_contact=True, with_bot_contact=True)
   c.plot()
 
 
@@ -2116,7 +2191,7 @@ straight_heater_doped_strip
 
   import gdsfactory as gf
 
-  c = gf.components.straight_heater_doped_strip(length=320.0, nsections=3, contact_metal_size=(10.0, 10.0), contact_size=(10.0, 10.0), heater_width=2.0, heater_gap=0.8, width=0.5, with_top_contact=True, with_bot_contact=True)
+  c = gf.components.straight_heater_doped_strip(length=320.0, nsections=3, contact_metal_size=(10.0, 10.0), contact_size=(10.0, 10.0), with_taper1=True, with_taper2=True, heater_width=2.0, heater_gap=0.8, contact_gap=0.0, width=0.5, with_top_contact=True, with_bot_contact=True)
   c.plot()
 
 
@@ -2521,7 +2596,22 @@ text_rectangular
 
   import gdsfactory as gf
 
-  c = gf.components.text_rectangular(text='abcd', size=10.0, position=(0, 0), justify='left', layers=((1, 0),))
+  c = gf.components.text_rectangular(text='abcd', size=10.0, position=(0.0, 0.0), justify='left', layer=(1, 0))
+  c.plot()
+
+
+
+text_rectangular_multi_layer
+----------------------------------------------------
+
+.. autofunction:: gdsfactory.components.text_rectangular_multi_layer
+
+.. plot::
+  :include-source:
+
+  import gdsfactory as gf
+
+  c = gf.components.text_rectangular_multi_layer(text='abcd', layers=((1, 0), (41, 0), (45, 0), (49, 0)))
   c.plot()
 
 
@@ -2566,7 +2656,7 @@ version_stamp
 
   import gdsfactory as gf
 
-  c = gf.components.version_stamp(labels=('demo_label',), with_qr_code=False, layer=(1, 0), pixel_size=1, version='3.8.4', text_size=10)
+  c = gf.components.version_stamp(labels=('demo_label',), with_qr_code=False, layer=(1, 0), pixel_size=1, version='3.10.9', text_size=10)
   c.plot()
 
 

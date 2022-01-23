@@ -5,7 +5,7 @@ import numpy as np
 import gdsfactory as gf
 from gdsfactory.components.rectangle import rectangle
 from gdsfactory.components.text import text
-from gdsfactory.types import Layer
+from gdsfactory.types import Anchor, Layer
 
 big_square = gf.partial(rectangle, size=(1300, 2600))
 
@@ -17,12 +17,12 @@ def die_bbox(
     street_length: float = 1000.0,
     die_name: Optional[str] = None,
     text_size: float = 100.0,
-    text_location: str = "SW",
+    text_anchor: Anchor = "sw",
     layer: Layer = (49, 0),
     padding: float = 10.0,
 ) -> gf.Component:
-    """Creates a basic boundary box. Perfect for defining dicing lanes.
-    the boundary of the chip/die
+    """Return component with boundary box frame around it.
+    Perfect for defining the boundary of the chip/die
     it can also add a label with the name of the die.
     similar to die and bbox
 
@@ -34,7 +34,7 @@ def die_bbox(
         street_length: length of the boundary box
         die_name: Label text.
         text_size: Label text size.
-        text_location: {'NW', 'N', 'NE', 'SW', 'S', 'SE'} Label text compass location.
+        text_anchor: {'nw', 'nc', 'ne', 'sw', 'sc', 'se'} text location.
         layer: Specific layer(s) to put polygon geometry on.
         padding: adds padding
 
@@ -83,22 +83,18 @@ def die_bbox(
         t = D.add_ref(text(text=die_name, size=text_size, layer=layer))
 
         d = street_width + 20
-        if type(text_location) is str:
-            text_location = text_location.upper()
-            if text_location == "NW":
-                t.xmin, t.ymax = [-sx + d, sy - d]
-            elif text_location == "N":
-                t.x, t.ymax = [0, sy - d]
-            elif text_location == "NE":
-                t.xmax, t.ymax = [sx - d, sy - d]
-            if text_location == "SW":
-                t.xmin, t.ymin = [-sx + d, -sy + d]
-            elif text_location == "S":
-                t.x, t.ymin = [0, -sy + d]
-            elif text_location == "SE":
-                t.xmax, t.ymin = [sx - d, -sy + d]
-        else:
-            t.x, t.y = text_location
+        if text_anchor == "nw":
+            t.xmin, t.ymax = [-sx + d, sy - d]
+        elif text_anchor == "nc":
+            t.x, t.ymax = [0, sy - d]
+        elif text_anchor == "ne":
+            t.xmax, t.ymax = [sx - d, sy - d]
+        if text_anchor == "sw":
+            t.xmin, t.ymin = [-sx + d, -sy + d]
+        elif text_anchor == "sc":
+            t.x, t.ymin = [0, -sy + d]
+        elif text_anchor == "se":
+            t.xmax, t.ymin = [sx - d, -sy + d]
 
     return D
 

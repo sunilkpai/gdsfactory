@@ -1,9 +1,10 @@
 cells:
-  coupler90_d41d8cd9:
+  coupler90:
     changed: {}
     default:
       bend:
         function: bend_euler
+      bend_cross_section: null
       cross_section:
         function: cross_section
       gap: 0.2
@@ -11,6 +12,7 @@ cells:
     full:
       bend:
         function: bend_euler
+      bend_cross_section: null
       cross_section:
         function: cross_section
       gap: 0.2
@@ -18,12 +20,13 @@ cells:
     function_name: coupler90
     info_version: 1
     module: gdsfactory.components.coupler90
-    name: coupler90_d41d8cd9
+    name: coupler90
 info:
   changed: {}
   default:
     bend:
       function: bend_euler
+    bend_cross_section: null
     cross_section:
       function: cross_section
     gap: 0.2
@@ -31,6 +34,7 @@ info:
   full:
     bend:
       function: bend_euler
+    bend_cross_section: null
     cross_section:
       function: cross_section
     gap: 0.2
@@ -38,7 +42,7 @@ info:
   function_name: coupler90
   info_version: 1
   module: gdsfactory.components.coupler90
-  name: coupler90_d41d8cd9
+  name: coupler90
 ports:
   o1:
     layer:
@@ -84,4 +88,4 @@ ports:
     orientation: 0
     port_type: optical
     width: 0.5
-version: 1
+version: 0.0.1

@@ -20,9 +20,12 @@ from omegaconf.listconfig import ListConfig
 from phidl.device_layout import Device, DeviceReference
 from phidl.device_layout import Path as PathPhidl
 from phidl.device_layout import _parse_layer
+from typing_extensions import Literal
 
+from gdsfactory.config import CONF, logger
 from gdsfactory.cross_section import CrossSection
 from gdsfactory.hash_points import hash_points
+from gdsfactory.layers import LAYER_SET, LayerPhidl, LayerSet
 from gdsfactory.port import (
     Port,
     auto_rename_ports,
@@ -36,6 +39,8 @@ from gdsfactory.port import (
 )
 from gdsfactory.snap import snap_to_grid
 
+Plotter = Literal["holoviews", "matplotlib", "qt"]
+
 
 class MutabilityError(ValueError):
     pass
@@ -46,9 +51,11 @@ Coordinate = Union[Tuple[Number, Number], ndarray, List[Number]]
 Coordinates = Union[List[Coordinate], ndarray, List[Number], Tuple[Number, ...]]
 PathType = Union[str, Path]
 Float2 = Tuple[float, float]
+Layer = Tuple[int, int]
+Layers = Tuple[Layer, ...]
 
-tmp = pathlib.Path(tempfile.TemporaryDirectory().name).parent / "gdsfactory"
-tmp.mkdir(exist_ok=True)
+tmp = pathlib.Path(tempfile.TemporaryDirectory().name) / "gdsfactory"
+tmp.mkdir(exist_ok=True, parents=True)
 _timestamp2019 = datetime.datetime.fromtimestamp(1572014192.8273)
 MAX_NAME_LENGTH = 32
 
@@ -106,7 +113,7 @@ class SizeInfo:
 
 def _rotate_points(
     points: Coordinates,
-    angle: Number = 45,
+    angle: int = 45,
     center: Coordinate = (
         0.0,
         0.0,
@@ -148,7 +155,7 @@ class ComponentReference(DeviceReference):
         self,
         component: Device,
         origin: Coordinate = (0, 0),
-        rotation: Number = 0,
+        rotation: int = 0,
         magnification: None = None,
         x_reflection: bool = False,
         visual_label: str = "",
@@ -286,11 +293,11 @@ class ComponentReference(DeviceReference):
     def _transform_port(
         self,
         point: ndarray,
-        orientation: Number,
+        orientation: int,
         origin: Coordinate = (0, 0),
-        rotation: Optional[Number] = None,
+        rotation: Optional[int] = None,
         x_reflection: bool = False,
-    ) -> Tuple[ndarray, Number]:
+    ) -> Tuple[ndarray, int]:
         # Apply GDS-type transformations to a port (x_ref)
         new_point = np.array(point)
         new_orientation = orientation
@@ -305,13 +312,13 @@ class ComponentReference(DeviceReference):
             new_point = new_point + np.array(origin)
         new_orientation = mod(new_orientation, 360)
 
-        return new_point, new_orientation
+        return new_point, int(new_orientation)
 
     def _transform_point(
         self,
         point: ndarray,
         origin: Coordinate = (0, 0),
-        rotation: Optional[Number] = None,
+        rotation: Optional[int] = None,
         x_reflection: bool = False,
     ) -> ndarray:
         # Apply GDS-type transformations to a port (x_ref)
@@ -356,8 +363,9 @@ class ComponentReference(DeviceReference):
             o = origin.midpoint
         else:
             raise ValueError(
-                f"move(origin={origin}) needs a Coordinate, a port, "
-                + f"or a port name {list(self.ports.keys())}"
+                f"move(origin={origin})\n"
+                f"Invalid origin = {origin!r} needs to be"
+                f"a coordinate, port or port name {list(self.ports.keys())}"
             )
 
         if hasattr(destination, "midpoint"):
@@ -371,8 +379,9 @@ class ComponentReference(DeviceReference):
             d = destination.midpoint
         else:
             raise ValueError(
-                f"{self.parent.name}.move(destination={destination}) Move needs "
-                + f"a coordinate, a port, or a port name {list(self.ports.keys())}"
+                f"{self.parent.name}.move(destination={destination}) \n"
+                f"Invalid destination = {destination!r} needs to be"
+                f"a coordinate, a port, or a valid port name {list(self.ports.keys())}"
             )
 
         # Lock one axis if necessary
@@ -389,14 +398,14 @@ class ComponentReference(DeviceReference):
 
     def rotate(
         self,
-        angle: Number = 45,
+        angle: int = 45,
         center: Coordinate = (0.0, 0.0),
     ) -> "ComponentReference":
-        """Return ComponentReference rotated:
+        """Returns rotated ComponentReference
 
         Args:
             angle: in degrees
-            center: x,y
+            center: x, y
         """
         if angle == 0:
             return self
@@ -426,7 +435,7 @@ class ComponentReference(DeviceReference):
         self.reflect((x0, 1), (x0, 0))
 
     def reflect_v(
-        self, port_name: Optional[str] = None, y0: Optional[Number] = None
+        self, port_name: Optional[str] = None, y0: Optional[float] = None
     ) -> None:
         """Perform vertical mirror using y0 as axis (default, y0=0)."""
         if port_name is None and y0 is None:
@@ -471,10 +480,9 @@ class ComponentReference(DeviceReference):
         return self
 
     def connect(
-        self, port: Union[str, Port], destination: Port, overlap: Number = 0.0
+        self, port: Union[str, Port], destination: Port, overlap: float = 0.0
     ) -> "ComponentReference":
-        """Returns Component reference
-        origin port_name connects to a destination
+        """Returns Component reference where port_name connects to a destination
 
         Args:
             port: origin port name
@@ -490,8 +498,9 @@ class ComponentReference(DeviceReference):
         elif isinstance(port, Port):
             p = port
         else:
+            ports = list(self.ports.keys())
             raise ValueError(
-                f"{self.parent.name}.connect({port}): {port} not in {list(self.ports.keys())}"
+                f"port = {port!r} not in {self.parent.name!r} ports {ports}"
             )
 
         angle = 180 + destination.orientation - p.orientation
@@ -515,17 +524,26 @@ class ComponentReference(DeviceReference):
 
         Args:
             layer: port GDS layer
-            prefix:
-            orientation:
+            prefix: port name prefix
+            orientation: in degrees
+            width: port width
+            layers_excluded: List of layers to exclude
+            port_type: optical, electrical, ...
+            clockwise: if True, sort ports clockwise, False: counter-clockwise
         """
         return list(select_ports(self.ports, **kwargs).values())
 
-    def get_ports_dict(self, **kwargs) -> List[Port]:
+    def get_ports_dict(self, **kwargs) -> Dict[str, Port]:
         """Returns a list of ports.
 
         Args:
             layer: port GDS layer
-            prefix: for example "E" for east, "W" for west ...
+            prefix: port name prefix
+            orientation: in degrees
+            width: port width
+            layers_excluded: List of layers to exclude
+            port_type: optical, electrical, ...
+            clockwise: if True, sort ports clockwise, False: counter-clockwise
         """
         return select_ports(self.ports, **kwargs)
 
@@ -598,7 +616,13 @@ class Component(Device):
 
     """
 
-    def __init__(self, name: str = "Unnamed", **kwargs) -> None:
+    def __init__(
+        self,
+        name: str = "Unnamed",
+        version: str = "0.0.1",
+        changelog: str = "",
+        **kwargs,
+    ) -> None:
 
         self.__ports__ = {}
         self.aliases = {}
@@ -609,8 +633,16 @@ class Component(Device):
         super(Component, self).__init__(name=name, exclude_from_current=True)
         self.name = name  # overwrie PHIDL's incremental naming convention
         self.info = DictConfig(self.info)
-        self.cached = False
+        self._locked = False
         self.get_child_name = False
+        self.version = version
+        self.changelog = changelog
+
+    def unlock(self):
+        self._locked = False
+
+    def lock(self):
+        self._locked = True
 
     @classmethod
     def __get_validators__(cls):
@@ -910,7 +942,7 @@ class Component(Device):
         if name is not None:
             p.name = name
         if p.name in self.ports:
-            raise ValueError(f"add_port() Port name {p.name} exists in {self.name}")
+            raise ValueError(f"add_port() Port name {p.name!r} exists in {self.name!r}")
 
         self.ports[p.name] = p
         return p
@@ -985,12 +1017,14 @@ class Component(Device):
                 component.add_polygon(polys, layer=layer)
         return component
 
-    def copy(self, prefix: str = "", suffix: str = "_copy") -> Device:
+    def copy(
+        self, prefix: str = "", suffix: str = "_copy", cache: bool = True
+    ) -> Device:
         from gdsfactory.copy import copy
 
-        return copy(self, prefix=prefix, suffix=suffix)
+        return copy(self, prefix=prefix, suffix=suffix, cache=cache)
 
-    def copy_child_info(self, component) -> None:
+    def copy_child_info(self, component: "Component") -> None:
         """Copy info from another component.
         so hierarchical components propagate child cells info.
         """
@@ -1004,7 +1038,12 @@ class Component(Device):
         # self.__size_info__  = SizeInfo(self.bbox)
         return SizeInfo(self.bbox)  # self.__size_info__
 
-    def add(self, element):
+    def get_setting(self, setting: str) -> Union[str, int, float]:
+        return self.info.get(
+            setting, self.info.full.get(setting, self.info_child.get(setting))
+        )
+
+    def add(self, element) -> None:
         """
         Add a new element or list of elements to this Component
 
@@ -1014,10 +1053,13 @@ class Component(Device):
             cell.
 
         """
-        if self.cached:
+        if self._locked:
             raise MutabilityError(
-                f"Error Adding element to cached Component {self.name!r}. "
-                "You need to make a copy of this cached Component or create a new one."
+                f"Error Adding element to locked Component {self.name!r}. "
+                "You need to make a copy of this Component or create a new one."
+                "Changing a component after creating it can be dangerous "
+                "as it will affect all of its instances. "
+                "You can unlock it (at your own risk) by calling `unlock()`"
             )
         super().add(element)
 
@@ -1078,64 +1120,160 @@ class Component(Device):
         return layers
 
     def _repr_html_(self):
-        """Print component, show geometry in matplotlib and in klayout
-        when using jupyter notebooks
+        """Print component, show geometry in klayout and return plot
+        for jupyter notebooks
         """
         self.show(show_ports=False)
-        self.plot()
-        return self.__str__()
+        print(self)
+        return self.plot(plotter="matplotlib")
 
-    def plot(
+    def plot(self, plotter: Optional[Plotter] = None, **kwargs) -> None:
+        """Return component plot.
+
+        Args:
+            plotter: backend ('holoviews', 'matplotlib', 'qt'). Defaults to matplotlib
+
+        KeyError Args:
+            layers_excluded: list of layers to exclude.
+            layer_set: layer_set colors loaded from Klayout.
+            min_aspect: minimum aspect ratio.
+
+        """
+        plotter = plotter or CONF.get("plotter", "matplotlib")
+
+        if plotter == "matplotlib":
+            from phidl import quickplot as plot
+
+            plot(self)
+        elif plotter == "holoviews":
+            import holoviews as hv
+
+            hv.extension("bokeh")
+            return self.ploth(**kwargs)
+
+        elif plotter == "qt":
+            from phidl.quickplotter import quickplot2
+
+            quickplot2(self)
+
+    def ploth(
         self,
-        clear_cache: bool = False,
-    ) -> None:
-        """Plot component in matplotlib"""
-        from phidl import quickplot as plot
+        layers_excluded: Optional[Layers] = None,
+        layer_set: LayerSet = LAYER_SET,
+        min_aspect: float = 0.25,
+        padding: float = 0.5,
+    ):
+        """Plot Component in holoviews.
 
-        from gdsfactory.cell import clear_cache as clear_cache_function
+        adapted from dphox.device.Device.hvplot
 
-        plot(self)
-        if clear_cache:
-            clear_cache_function()
+        Args:
+            layers_excluded: list of layers to exclude.
+            layer_set: layer_set colors loaded from Klayout.
+            min_aspect: minimum aspect ratio.
+            padding: around bounding box.
+
+        Returns:
+            Holoviews Overlay to display all polygons.
+
+        """
+        from gdsfactory.add_pins import get_pin_triangle_polygon_tip
+
+        try:
+            import holoviews as hv
+        except ImportError:
+            print("you need to `pip install holoviews`")
+
+        self._bb_valid = False  # recompute the bounding box
+        b = self.bbox + ((-padding, -padding), (padding, padding))
+        b = np.array(b.flat)
+        center = np.array((np.sum(b[::2]) / 2, np.sum(b[1::2]) / 2))
+        size = np.array((np.abs(b[2] - b[0]), np.abs(b[3] - b[1])))
+        dx = np.array(
+            (
+                np.maximum(min_aspect * size[1], size[0]) / 2,
+                np.maximum(size[1], min_aspect * size[0]) / 2,
+            )
+        )
+        b = np.hstack((center - dx, center + dx))
+
+        plots_to_overlay = []
+        layers_excluded = [] if layers_excluded is None else layers_excluded
+
+        for layer, polygon in self.get_polygons(by_spec=True).items():
+            if layer in layers_excluded:
+                continue
+
+            try:
+                layer = layer_set.get_from_tuple(layer)
+            except ValueError:
+                layers = list(layer_set._layers.keys())
+                warnings.warn(f"{layer} not defined in {layers}")
+                layer = LayerPhidl(gds_layer=layer[0], gds_datatype=layer[1])
+
+            plots_to_overlay.append(
+                hv.Polygons(polygon, label=str(layer.name)).opts(
+                    data_aspect=1,
+                    frame_height=200,
+                    fill_alpha=layer.alpha,
+                    ylim=(b[1], b[3]),
+                    xlim=(b[0], b[2]),
+                    color=layer.color,
+                    line_alpha=layer.alpha,
+                    tools=["hover"],
+                )
+            )
+        for name, port in self.ports.items():
+            name = str(name)
+            polygon, ptip = get_pin_triangle_polygon_tip(port=port)
+
+            plots_to_overlay.append(
+                hv.Polygons(polygon, label=name).opts(
+                    data_aspect=1,
+                    frame_height=200,
+                    fill_alpha=0,
+                    ylim=(b[1], b[3]),
+                    xlim=(b[0], b[2]),
+                    color="red",
+                    line_alpha=layer.alpha,
+                    tools=["hover"],
+                )
+                * hv.Text(ptip[0], ptip[1], name)
+            )
+
+        return hv.Overlay(plots_to_overlay).opts(
+            show_legend=True, shared_axes=False, ylim=(b[1], b[3]), xlim=(b[0], b[2])
+        )
 
     def show(
         self,
         show_ports: bool = True,
         show_subports: bool = False,
-        clear_cache: bool = False,
     ) -> None:
-        """Show component in klayout
+        """Show component in klayout.
 
-        if show_subports = True
-        We add pins in a new component
-        that contains a reference to the old component
-        so we don't modify the original component
+        show_subports = True adds pins in a component copy (only used for display)
+        so the original component remains as it was
 
         Args:
             show_ports: shows component with port markers and labels
             show_subports: add ports markers and labels to component references
-            clear_cache: after showing component clears cache (useful for jupyter)
         """
         from gdsfactory.add_pins import add_pins_triangle
         from gdsfactory.show import show
 
         if show_subports:
-            component = self.copy()
+            component = self.copy(suffix="", cache=False)
             for reference in component.references:
                 add_pins_triangle(component=component, reference=reference)
 
         elif show_ports:
-            component = self.copy()
+            component = self.copy(suffix="", cache=False)
             add_pins_triangle(component=component)
         else:
             component = self
 
-        show(component, clear_cache=clear_cache)
-
-    def plotqt(self):
-        from phidl.quickplotter import quickplot2
-
-        quickplot2(self)
+        show(component)
 
     def write_gds(
         self,
@@ -1144,6 +1282,7 @@ class Component(Device):
         unit: float = 1e-6,
         precision: float = 1e-9,
         timestamp: Optional[datetime.datetime] = _timestamp2019,
+        logging: bool = True,
     ) -> Path:
         """Write component to GDS and returns gdspath
 
@@ -1189,6 +1328,8 @@ class Component(Device):
         lib = gdspy.GdsLibrary(unit=unit, precision=precision)
         lib.write_gds(gdspath, cells=all_cells, timestamp=timestamp)
         self.path = gdspath
+        if logging:
+            logger.info(f"Write GDS to {gdspath}")
         return gdspath
 
     def write_gds_with_metadata(self, *args, **kwargs) -> Path:
@@ -1196,6 +1337,7 @@ class Component(Device):
         gdspath = self.write_gds(*args, **kwargs)
         metadata = gdspath.with_suffix(".yml")
         metadata.write_text(self.to_yaml())
+        logger.info(f"Write YAML metadata to {metadata}")
         return gdspath
 
     def to_dict_config(
@@ -1222,7 +1364,7 @@ class Component(Device):
         d.ports = ports
         d.info = self.info
         d.cells = cells
-        d.version = 1
+        d.version = self.version
         d.info.name = self.name
         return d
 
@@ -1254,7 +1396,7 @@ class Component(Device):
     def auto_rename_ports(self, **kwargs) -> None:
         """Renames ports by orientation NSEW (north, south, east, west).
 
-        Args:
+        Keyword Args:
             function: to rename ports
             select_ports_optical:
             select_ports_electrical:
@@ -1283,7 +1425,7 @@ class Component(Device):
     def auto_rename_ports_orientation(self, **kwargs) -> None:
         """Renames ports by orientation NSEW (north, south, east, west).
 
-        Args:
+        Keyword Args:
             function: to rename ports
             select_ports_optical:
             select_ports_electrical:
@@ -1335,7 +1477,7 @@ class Component(Device):
     def add_padding(self, **kwargs) -> Device:
         """Returns component with padding
 
-        Args:
+        Keyword Args:
             component
             layers: list of layers
             suffix for name
@@ -1428,14 +1570,14 @@ def _clean_value(value: Any) -> Any:
         # value = clean_dict(value.to_dict())
     if isinstance(value, float) and int(value) == value:
         value = int(value)
-    elif type(value) in [int, float, str, bool]:
-        pass
     elif isinstance(value, (np.int64, np.int32)):
         value = int(value)
     elif isinstance(value, np.ndarray):
         value = [_clean_value(i) for i in value]
     elif isinstance(value, np.float64):
         value = float(value)
+    elif type(value) in [int, float, str, bool]:
+        pass
     elif callable(value) and isinstance(value, toolz.functoolz.Compose):
         value = [_clean_value(value.first)] + [
             _clean_value(func) for func in value.funcs
@@ -1550,12 +1692,22 @@ def test_bbox_component():
 
 
 if __name__ == "__main__":
-    test_bbox_reference()
-    test_bbox_component()
+    # test_bbox_reference()
+    # test_bbox_component()
 
-    # import gdsfactory as gf
+    import holoviews as hv
+    from bokeh.plotting import output_file, show
+
+    import gdsfactory as gf
+
+    hv.extension("bokeh")
+    output_file("plot.html")
+
+    c = gf.components.rectangle(size=(10, 3), layer=(0, 0))
     # c = gf.components.straight(length=2, info=dict(ng=4.2, wavelength=1.55))
-    # c2 = c.rotate()
+    # c.show()
+    p = c.ploth()
+    show(p)
 
     # c = gf.Component("component_with_offgrid_polygons")
     # c1 = c << gf.c.rectangle(size=(1.5e-3, 1.5e-3), port_type=None)

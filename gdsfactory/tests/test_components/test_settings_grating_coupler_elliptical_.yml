@@ -21,7 +21,7 @@ cells:
     info_version: 1
     module: gdsfactory.components.circle
     name: circle_602e85fd
-  grating_coupler_ellipti_9314da1b:
+  grating_coupler_elliptical:
     changed: {}
     default:
       big_last_tooth: false
@@ -40,7 +40,6 @@ cells:
       n_periods: 30
       nclad: 1.443
       neff: 2.638
-      p_start: 26
       polarization: te
       slab_offset: 2
       slab_xmin: -1
@@ -66,7 +65,6 @@ cells:
       n_periods: 30
       nclad: 1.443
       neff: 2.638
-      p_start: 26
       polarization: te
       slab_offset: 2
       slab_xmin: -1
@@ -78,7 +76,7 @@ cells:
     function_name: grating_coupler_elliptical
     info_version: 1
     module: gdsfactory.components.grating_coupler_elliptical
-    name: grating_coupler_ellipti_9314da1b
+    name: grating_coupler_elliptical
     polarization: te
     wavelength: 1.554
 info:
@@ -100,7 +98,6 @@ info:
     n_periods: 30
     nclad: 1.443
     neff: 2.638
-    p_start: 26
     polarization: te
     slab_offset: 2
     slab_xmin: -1
@@ -126,7 +123,6 @@ info:
     n_periods: 30
     nclad: 1.443
     neff: 2.638
-    p_start: 26
     polarization: te
     slab_offset: 2
     slab_xmin: -1
@@ -138,7 +134,7 @@ info:
   function_name: grating_coupler_elliptical
   info_version: 1
   module: gdsfactory.components.grating_coupler_elliptical
-  name: grating_coupler_ellipti_9314da1b
+  name: grating_coupler_elliptical
   polarization: te
   wavelength: 1.554
 ports:
@@ -147,7 +143,7 @@ ports:
     - 1
     - 0
     midpoint:
-    - 0.721
+    - 0
     - 0
     name: o1
     orientation: 180
@@ -158,10 +154,10 @@ ports:
     - 203
     - 0
     midpoint:
-    - 17.322
+    - 22.1
     - 0
     name: vertical_te
     orientation: 0
     port_type: vertical_te
     width: 11
-version: 1
+version: 0.0.1

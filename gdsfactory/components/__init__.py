@@ -1,3 +1,4 @@
+from gdsfactory.components.add_fidutials import add_fidutials
 from gdsfactory.components.align import add_frame, align_wafer
 from gdsfactory.components.array import array
 from gdsfactory.components.array_with_fanout import (
@@ -20,6 +21,7 @@ from gdsfactory.components.bend_s import bend_s
 from gdsfactory.components.C import C
 from gdsfactory.components.cavity import cavity
 from gdsfactory.components.cdc import cdc
+from gdsfactory.components.cdsem_all import cdsem_all
 from gdsfactory.components.circle import circle
 from gdsfactory.components.compass import compass
 from gdsfactory.components.component_lattice import component_lattice
@@ -65,7 +67,8 @@ from gdsfactory.components.delay_snake2 import delay_snake2, test_delay_snake2_l
 from gdsfactory.components.delay_snake3 import delay_snake3, test_delay_snake3_length
 from gdsfactory.components.dicing_lane import dicing_lane
 from gdsfactory.components.die import die
-from gdsfactory.components.die_bbox import big_square, die_bbox
+from gdsfactory.components.die_bbox import die_bbox
+from gdsfactory.components.die_bbox_frame import die_bbox_frame
 from gdsfactory.components.disk import disk
 from gdsfactory.components.ellipse import ellipse
 from gdsfactory.components.extend_ports_list import extend_ports_list
@@ -97,11 +100,14 @@ from gdsfactory.components.grating_coupler_elliptical_trenches import (
     grating_coupler_tm,
 )
 from gdsfactory.components.grating_coupler_loss import (
-    connect_loopback,
-    grating_coupler_loss,
+    grating_coupler_loss_fiber_array,
+    grating_coupler_loss_fiber_array4,
     loss_deembedding_ch12_34,
     loss_deembedding_ch13_24,
     loss_deembedding_ch14_23,
+)
+from gdsfactory.components.grating_coupler_loss_fiber_single import (
+    grating_coupler_loss_fiber_single,
 )
 from gdsfactory.components.grating_coupler_rectangular import (
     grating_coupler_rectangular,
@@ -120,13 +126,13 @@ from gdsfactory.components.litho_ruler import litho_ruler
 from gdsfactory.components.litho_steps import litho_steps
 from gdsfactory.components.logo import logo
 from gdsfactory.components.loop_mirror import loop_mirror
-from gdsfactory.components.manhattan_font import manhattan_text
 from gdsfactory.components.mmi1x2 import mmi1x2
 from gdsfactory.components.mmi2x2 import mmi2x2
 from gdsfactory.components.mzi import mzi, mzi1x2_2x2, mzi2x2_2x2, mzi_coupler
 from gdsfactory.components.mzi_arm import mzi_arm
 from gdsfactory.components.mzi_arms import mzi_arms
 from gdsfactory.components.mzi_lattice import mzi_lattice
+from gdsfactory.components.mzi_pads_center import mzi_pads_center
 from gdsfactory.components.mzi_phase_shifter import (
     mzi_phase_shifter,
     mzi_phase_shifter_top_heater_metal,
@@ -137,7 +143,6 @@ from gdsfactory.components.nxn import nxn
 from gdsfactory.components.pad import pad, pad_array, pad_array90, pad_array270
 from gdsfactory.components.pad_gsg import pad_gsg_open, pad_gsg_short
 from gdsfactory.components.pads_shorted import pads_shorted
-from gdsfactory.components.pcm_optical import pcm_optical
 from gdsfactory.components.ramp import ramp
 from gdsfactory.components.rectangle import rectangle
 from gdsfactory.components.rectangle_with_slits import rectangle_with_slits
@@ -145,9 +150,11 @@ from gdsfactory.components.resistance_meander import resistance_meander
 from gdsfactory.components.resistance_sheet import resistance_sheet
 from gdsfactory.components.ring import ring
 from gdsfactory.components.ring_double import ring_double
+from gdsfactory.components.ring_double_heater import ring_double_heater
 from gdsfactory.components.ring_single import ring_single
 from gdsfactory.components.ring_single_array import ring_single_array
 from gdsfactory.components.ring_single_dut import ring_single_dut, taper2
+from gdsfactory.components.ring_single_heater import ring_single_heater
 from gdsfactory.components.seal_ring import seal_ring
 from gdsfactory.components.spiral import spiral
 from gdsfactory.components.spiral_circular import spiral_circular
@@ -200,7 +207,10 @@ from gdsfactory.components.taper_from_csv import (
 )
 from gdsfactory.components.taper_parabolic import taper_parabolic
 from gdsfactory.components.text import githash, text
-from gdsfactory.components.text_rectangular import text_rectangular
+from gdsfactory.components.text_rectangular import (
+    text_rectangular,
+    text_rectangular_multi_layer,
+)
 from gdsfactory.components.triangle import triangle
 from gdsfactory.components.verniers import verniers
 from gdsfactory.components.version_stamp import pixel, qrcode, version_stamp
@@ -210,9 +220,11 @@ from gdsfactory.components.waveguide_template import strip
 from gdsfactory.components.wire import wire_corner, wire_straight
 from gdsfactory.components.wire_sbend import wire_sbend
 
+# Components to test
 factory = dict(
     C=C,
     L=L,
+    add_fidutials=add_fidutials,
     add_frame=add_frame,
     align_wafer=align_wafer,
     array=array,
@@ -270,6 +282,7 @@ factory = dict(
     delay_snake3=delay_snake3,
     die=die,
     die_bbox=die_bbox,
+    die_bbox_frame=die_bbox_frame,
     disk=disk,
     ellipse=ellipse,
     extend_port=extend_port,
@@ -286,7 +299,9 @@ factory = dict(
     grating_coupler_elliptical_arbitrary=grating_coupler_elliptical_arbitrary,
     grating_coupler_elliptical_lumerical=grating_coupler_elliptical_lumerical,
     grating_coupler_elliptical_trenches=grating_coupler_elliptical_trenches,
-    grating_coupler_loss=grating_coupler_loss,
+    grating_coupler_loss_fiber_array4=grating_coupler_loss_fiber_array4,
+    grating_coupler_loss_fiber_array=grating_coupler_loss_fiber_array,
+    grating_coupler_loss_fiber_single=grating_coupler_loss_fiber_single,
     grating_coupler_te=grating_coupler_te,
     grating_coupler_tm=grating_coupler_tm,
     grating_coupler_tree=grating_coupler_tree,
@@ -301,7 +316,6 @@ factory = dict(
     loss_deembedding_ch12_34=loss_deembedding_ch12_34,
     loss_deembedding_ch13_24=loss_deembedding_ch13_24,
     loss_deembedding_ch14_23=loss_deembedding_ch14_23,
-    manhattan_text=manhattan_text,
     mmi1x2=mmi1x2,
     mmi2x2=mmi2x2,
     mzi=mzi,
@@ -311,6 +325,7 @@ factory = dict(
     mzi_arm=mzi_arm,
     mzi_arms=mzi_arms,
     mzi_lattice=mzi_lattice,
+    mzi_pads_center=mzi_pads_center,
     mzi_phase_shifter=mzi_phase_shifter,
     mzi_phase_shifter_top_heater_metal=mzi_phase_shifter_top_heater_metal,
     mzit=mzit,
@@ -321,7 +336,7 @@ factory = dict(
     pad_gsg_open=pad_gsg_open,
     pad_array=pad_array,
     pads_shorted=pads_shorted,
-    pcm_optical=pcm_optical,
+    cdsem_all=cdsem_all,
     pixel=pixel,
     qrcode=qrcode,
     ramp=ramp,
@@ -334,6 +349,8 @@ factory = dict(
     ring_single=ring_single,
     ring_single_array=ring_single_array,
     ring_single_dut=ring_single_dut,
+    ring_single_heater=ring_single_heater,
+    ring_double_heater=ring_double_heater,
     spiral=spiral,
     spiral_circular=spiral_circular,
     spiral_external_io=spiral_external_io,
@@ -373,6 +390,7 @@ factory = dict(
     taper_w12_l200=taper_w12_l200,
     text=text,
     text_rectangular=text_rectangular,
+    text_rectangular_multi_layer=text_rectangular_multi_layer,
     triangle=triangle,
     verniers=verniers,
     version_stamp=version_stamp,
@@ -445,14 +463,12 @@ __all__ = [
     "bend_euler_s",
     "bend_port",
     "bend_s",
-    "big_square",
     "cavity",
     "circle",
     "compass",
     "compensation_path",
     "component_lattice",
     "component_sequence",
-    "connect_loopback",
     "coupler",
     "coupler90",
     "coupler90bend",
@@ -484,6 +500,7 @@ __all__ = [
     "delay_snake3",
     "die",
     "die_bbox",
+    "die_bbox_frame",
     "disk",
     "ellipse",
     "ellipse_arc",
@@ -520,8 +537,7 @@ __all__ = [
     "loss_deembedding_ch12_34",
     "loss_deembedding_ch13_24",
     "loss_deembedding_ch14_23",
-    "manhattan_font",
-    "manhattan_text",
+    "text_rectangular",
     "mmi1x2",
     "mmi2x2",
     "mzi",
@@ -532,7 +548,7 @@ __all__ = [
     "mzit",
     "mzit_lattice",
     "nxn",
-    "pcm_optical",
+    "cdsem_all",
     "pad",
     "pad_array",
     "pad_array90",

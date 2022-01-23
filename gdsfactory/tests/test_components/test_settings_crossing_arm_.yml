@@ -1,14 +1,30 @@
 cells:
-  crossing_arm_d41d8cd9:
+  crossing_arm:
     changed: {}
     default:
       L: 3.4
+      cross_section:
+        function: cross_section
+      layer_slab:
+      - 2
+      - 0
+      layer_wg:
+      - 1
+      - 0
       r1: 3
       r2: 1.1
       w: 1.2
       width: 0.5
     full:
       L: 3.4
+      cross_section:
+        function: cross_section
+      layer_slab:
+      - 2
+      - 0
+      layer_wg:
+      - 1
+      - 0
       r1: 3
       r2: 1.1
       w: 1.2
@@ -16,17 +32,61 @@ cells:
     function_name: crossing_arm
     info_version: 1
     module: gdsfactory.components.crossing_waveguide
-    name: crossing_arm_d41d8cd9
+    name: crossing_arm
+  ellipse_0ee24967:
+    changed:
+      layer:
+      - 2
+      - 0
+      radii:
+      - 3
+      - 1.1
+    default:
+      angle_resolution: 2.5
+      layer:
+      - 1
+      - 0
+      radii:
+      - 10
+      - 5
+    full:
+      angle_resolution: 2.5
+      layer:
+      - 2
+      - 0
+      radii:
+      - 3
+      - 1.1
+    function_name: ellipse
+    info_version: 1
+    module: gdsfactory.components.ellipse
+    name: ellipse_0ee24967
 info:
   changed: {}
   default:
     L: 3.4
+    cross_section:
+      function: cross_section
+    layer_slab:
+    - 2
+    - 0
+    layer_wg:
+    - 1
+    - 0
     r1: 3
     r2: 1.1
     w: 1.2
     width: 0.5
   full:
     L: 3.4
+    cross_section:
+      function: cross_section
+    layer_slab:
+    - 2
+    - 0
+    layer_wg:
+    - 1
+    - 0
     r1: 3
     r2: 1.1
     w: 1.2
@@ -34,7 +94,7 @@ info:
   function_name: crossing_arm
   info_version: 1
   module: gdsfactory.components.crossing_waveguide
-  name: crossing_arm_d41d8cd9
+  name: crossing_arm
 ports:
   o1:
     layer:
@@ -58,4 +118,4 @@ ports:
     orientation: 0
     port_type: optical
     width: 0.5
-version: 1
+version: 0.0.1

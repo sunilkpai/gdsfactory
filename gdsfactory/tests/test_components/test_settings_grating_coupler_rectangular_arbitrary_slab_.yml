@@ -12,6 +12,7 @@ cells:
       layer:
       - 1
       - 0
+      port_inclusion: 0
       port_type: electrical
       size:
       - 4
@@ -20,6 +21,7 @@ cells:
       layer:
       - 2
       - 0
+      port_inclusion: 0
       port_type: null
       size:
       - 9
@@ -41,6 +43,7 @@ cells:
       layer:
       - 1
       - 0
+      port_inclusion: 0
       port_type: electrical
       size:
       - 4
@@ -49,6 +52,7 @@ cells:
       layer:
       - 1
       - 0
+      port_inclusion: 0
       port_type: null
       size:
       - 0.5
@@ -57,7 +61,7 @@ cells:
     info_version: 1
     module: gdsfactory.components.compass
     name: compass_ae46bf3c
-  grating_coupler_rectang_aec72af6:
+  grating_coupler_rectang_c148e9a3:
     changed: {}
     default:
       gaps:
@@ -142,7 +146,7 @@ cells:
     function_name: grating_coupler_rectangular_arbitrary_slab
     info_version: 1
     module: gdsfactory.components.grating_coupler_rectangular_arbitrary_slab
-    name: grating_coupler_rectang_aec72af6
+    name: grating_coupler_rectang_c148e9a3
     polarization: te
     wavelength: 1.55
   rectangle_14fb5f60:
@@ -340,7 +344,7 @@ info:
   function_name: grating_coupler_rectangular_arbitrary_slab
   info_version: 1
   module: gdsfactory.components.grating_coupler_rectangular_arbitrary_slab
-  name: grating_coupler_rectang_aec72af6
+  name: grating_coupler_rectang_c148e9a3
   polarization: te
   wavelength: 1.55
 ports:
@@ -366,4 +370,4 @@ ports:
     orientation: 0
     port_type: vertical_te
     width: 1
-version: 1
+version: 0.0.1

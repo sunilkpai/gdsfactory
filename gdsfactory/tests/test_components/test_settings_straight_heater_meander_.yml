@@ -70,6 +70,7 @@ cells:
       layer:
       - 1
       - 0
+      port_inclusion: 0
       port_type: electrical
       size:
       - 4
@@ -78,6 +79,7 @@ cells:
       layer:
       - 47
       - 0
+      port_inclusion: 0
       port_type: electrical
       size:
       - 11
@@ -98,6 +100,7 @@ cells:
       layer:
       - 1
       - 0
+      port_inclusion: 0
       port_type: electrical
       size:
       - 4
@@ -106,6 +109,7 @@ cells:
       layer:
       - 45
       - 0
+      port_inclusion: 0
       port_type: electrical
       size:
       - 11
@@ -126,6 +130,7 @@ cells:
       layer:
       - 1
       - 0
+      port_inclusion: 0
       port_type: electrical
       size:
       - 4
@@ -134,6 +139,7 @@ cells:
       layer:
       - 49
       - 0
+      port_inclusion: 0
       port_type: electrical
       size:
       - 11
@@ -344,7 +350,7 @@ cells:
     module: gdsfactory.components.straight
     name: straight_dbc1e874
     width: 0.5
-  straight_heater_meander_d41d8cd9:
+  straight_heater_meander:
     changed: {}
     default:
       contact:
@@ -419,7 +425,7 @@ cells:
     function_name: straight_heater_meander
     info_version: 1
     module: gdsfactory.components.straight_heater_meander
-    name: straight_heater_meander_d41d8cd9
+    name: straight_heater_meander
   taper_d31ba445:
     changed:
       cross_section:
@@ -533,7 +539,7 @@ info:
   function_name: straight_heater_meander
   info_version: 1
   module: gdsfactory.components.straight_heater_meander
-  name: straight_heater_meander_d41d8cd9
+  name: straight_heater_meander
 ports:
   e1:
     layer:
@@ -579,4 +585,4 @@ ports:
     orientation: 0
     port_type: optical
     width: 0.5
-version: 1
+version: 0.0.1

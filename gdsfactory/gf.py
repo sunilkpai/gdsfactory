@@ -12,7 +12,6 @@ import gdsfactory
 import gdsfactory.build as pb
 from gdsfactory.config import CONFIG, print_config
 from gdsfactory.gdsdiff.gdsdiff import gdsdiff
-from gdsfactory.import_gds import write_cells as write_cells_to_separate_gds
 from gdsfactory.install import install_gdsdiff, install_generic_tech, install_klive
 from gdsfactory.layers import lyp_to_dataclass
 from gdsfactory.mask.merge_json import merge_json
@@ -24,8 +23,9 @@ from gdsfactory.mask.write_labels import write_labels
 from gdsfactory.sweep.write_sweep_from_yaml import import_custom_doe_factories
 from gdsfactory.tech import LAYER
 from gdsfactory.types import PathType
+from gdsfactory.write_cells import write_cells as write_cells_to_separate_gds
 
-VERSION = "3.8.14"
+VERSION = "3.11.4"
 log_directory = CONFIG.get("log_directory")
 cwd = pathlib.Path.cwd()
 LAYER_LABEL = LAYER.LABEL
@@ -147,12 +147,12 @@ def build_does(yamlpath: str) -> None:
 
 
 @click.command(name="write_metadata")
-@click.argument("label_layer", required=False, default=LAYER_LABEL)
-def mask_merge(label_layer) -> None:
+@click.argument("layer_label", required=False, default=LAYER_LABEL)
+def mask_merge(layer_label) -> None:
     """merge JSON/Markdown from build/devices into build/mask"""
 
     gdspath = CONFIG["mask_gds"]
-    write_labels(gdspath=gdspath, label_layer=label_layer)
+    write_labels(gdspath=gdspath, layer_label=layer_label)
 
     merge_json()
     merge_markdown()
@@ -161,13 +161,13 @@ def mask_merge(label_layer) -> None:
 
 @click.command(name="write_labels")
 @click.argument("gdspath", default=None)
-@click.argument("label_layer", required=False, default=LAYER_LABEL)
-def write_mask_labels(gdspath: str, label_layer) -> None:
+@click.argument("layer_label", required=False, default=LAYER_LABEL)
+def write_mask_labels(gdspath: str, layer_label) -> None:
     """Find test and measurement labels."""
     if gdspath is None:
         gdspath = CONFIG["mask_gds"]
 
-    write_labels(gdspath=gdspath, label_layer=label_layer)
+    write_labels(gdspath=gdspath, layer_label=layer_label)
 
 
 # EXTRA

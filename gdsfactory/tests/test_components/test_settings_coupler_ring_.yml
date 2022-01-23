@@ -1,8 +1,9 @@
 cells:
-  coupler_ring_d41d8cd9:
+  coupler_ring:
     changed: {}
     default:
       bend: null
+      bend_cross_section: null
       coupler90:
         function: coupler90
       coupler_straight:
@@ -14,6 +15,7 @@ cells:
       radius: 5
     full:
       bend: null
+      bend_cross_section: null
       coupler90:
         function: coupler90
       coupler_straight:
@@ -26,11 +28,12 @@ cells:
     function_name: coupler_ring
     info_version: 1
     module: gdsfactory.components.coupler_ring
-    name: coupler_ring_d41d8cd9
+    name: coupler_ring
 info:
   changed: {}
   default:
     bend: null
+    bend_cross_section: null
     coupler90:
       function: coupler90
     coupler_straight:
@@ -42,6 +45,7 @@ info:
     radius: 5
   full:
     bend: null
+    bend_cross_section: null
     coupler90:
       function: coupler90
     coupler_straight:
@@ -54,7 +58,7 @@ info:
   function_name: coupler_ring
   info_version: 1
   module: gdsfactory.components.coupler_ring
-  name: coupler_ring_d41d8cd9
+  name: coupler_ring
 ports:
   o1:
     layer:
@@ -100,4 +104,4 @@ ports:
     orientation: 0
     port_type: optical
     width: 0.5
-version: 1
+version: 0.0.1

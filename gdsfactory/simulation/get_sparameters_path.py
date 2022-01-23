@@ -1,31 +1,32 @@
+import hashlib
 import pathlib
+from functools import partial
 from pathlib import Path
-from typing import Dict, Tuple
 
-from gdsfactory.component import Component
+import pandas as pd
+
 from gdsfactory.config import CONFIG
-from gdsfactory.name import dict2name, get_name_short
-from gdsfactory.tech import LAYER
+from gdsfactory.name import clean_value
+from gdsfactory.tech import LAYER, LAYER_STACK
+from gdsfactory.types import ComponentOrFactory
 
 
-def get_sparameters_path(
-    component: Component,
-    layer_to_material: Dict[Tuple[int, int], str],
-    layer_to_thickness: Dict[Tuple[int, int], int],
+def _get_sparameters_path(
+    component: ComponentOrFactory,
     dirpath: Path = CONFIG["sparameters"],
     **kwargs,
 ) -> Path:
-    """Returns Sparameters filepath.
-
-    it only includes the layers that are present in the component
+    """Return Sparameters CSV filepath.
+    hashes of all simulation settings to get a consitent and unique name.
 
     Args:
-        component:
-        layer_to_material: GDSlayer tuple to material alias
-        layer_to_thickness: GDSlayer tuple to thickness (nm)
-        dirpath:
+        component: component or component factory.
+        dirpath: directory path to store sparameters
         kwargs: simulation settings
     """
+
+    component = component() if callable(component) else component
+
     dirpath = pathlib.Path(dirpath)
     dirpath = (
         dirpath / component.function_name
@@ -33,14 +34,30 @@ def get_sparameters_path(
         else dirpath
     )
     dirpath.mkdir(exist_ok=True, parents=True)
-    material_to_thickness = {
-        layer_to_material[layer]: layer_to_thickness[layer]
-        for layer in layer_to_thickness.keys()
-        if tuple(layer) in component.get_layers()
-    }
-    material_to_thickness.update(**kwargs)
-    suffix = get_name_short(dict2name(**material_to_thickness))
-    return dirpath / f"{component.name}_{suffix}.dat"
+
+    kwargs_list = [f"{key}={clean_value(kwargs[key])}" for key in sorted(kwargs.keys())]
+    kwargs_string = "_".join(kwargs_list)
+    kwargs_hash = hashlib.md5(kwargs_string.encode()).hexdigest()[:8]
+    return dirpath / f"{component.name}_{kwargs_hash}.csv"
+
+
+def _get_sparameters_data(**kwargs) -> pd.DataFrame:
+    """Returns Sparameters data in a pandas DataFrame.
+
+    Keyword Args:
+        component: component
+        dirpath: directory path to store sparameters
+        kwargs: simulation settings
+    """
+    filepath = _get_sparameters_path(**kwargs)
+    return pd.read_csv(filepath)
+
+
+get_sparameters_path_meep = partial(_get_sparameters_path, tool="meep")
+get_sparameters_path_lumerical = partial(_get_sparameters_path, tool="lumerical")
+
+get_sparameters_data_meep = partial(_get_sparameters_data, tool="meep")
+get_sparameters_data_lumerical = partial(_get_sparameters_data, tool="lumerical")
 
 
 def test_get_sparameters_path() -> None:
@@ -55,22 +72,38 @@ def test_get_sparameters_path() -> None:
         LAYER.SLAB90: "si",
     }
 
+    name1 = "straight_713b8220"
+    name2 = "straight_cf5c9898_713b8220"
+    name3 = "straight_cf5c9898_5f6ae1fd"
+    name4 = "straight_2031115e"
+
     c = gf.components.straight()
-    p = get_sparameters_path(
+    p = get_sparameters_path_lumerical(
         component=c,
         layer_to_thickness=layer_to_thickness_sample,
         layer_to_material=layer_to_material_sample,
     )
-    assert p.stem == f"{c.name}_si220n", p.stem
+    assert p.stem == name1, p.stem
 
     c = gf.components.straight(layer=LAYER.SLAB90)
-    p = get_sparameters_path(
+    p = get_sparameters_path_lumerical(
         c,
         layer_to_thickness=layer_to_thickness_sample,
         layer_to_material=layer_to_material_sample,
     )
-    cell_name = f"{c.name}_si90n"
-    assert p.stem == cell_name, p.stem
+    assert p.stem == name2, p.stem
+
+    c = gf.components.straight(layer=LAYER.SLAB90)
+    p = get_sparameters_path_meep(c, layer_stack=LAYER_STACK)
+    assert p.stem == name3, p.stem
+
+    c = gf.components.straight()
+    p = get_sparameters_path_meep(
+        component=c,
+        layer_to_thickness=layer_to_thickness_sample,
+        layer_to_material=layer_to_material_sample,
+    )
+    assert p.stem == name4, p.stem
 
 
 if __name__ == "__main__":

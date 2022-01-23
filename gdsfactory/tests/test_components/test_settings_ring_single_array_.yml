@@ -74,6 +74,7 @@ cells:
       radius: 5
     default:
       bend: null
+      bend_cross_section: null
       coupler90:
         function: coupler90
       coupler_straight:
@@ -86,6 +87,7 @@ cells:
     full:
       bend:
         function: bend_euler
+      bend_cross_section: null
       coupler90:
         function: coupler90
       coupler_straight:
@@ -110,6 +112,7 @@ cells:
       radius: 10
     default:
       bend: null
+      bend_cross_section: null
       coupler90:
         function: coupler90
       coupler_straight:
@@ -122,6 +125,7 @@ cells:
     full:
       bend:
         function: bend_euler
+      bend_cross_section: null
       coupler90:
         function: coupler90
       coupler_straight:
@@ -203,7 +207,7 @@ cells:
     info_version: 1
     module: gdsfactory.components.ring_single
     name: ring_single_a371eccc
-  ring_single_array_d41d8cd9:
+  ring_single_array:
     changed: {}
     default:
       list_of_dicts:
@@ -230,7 +234,7 @@ cells:
     function_name: ring_single_array
     info_version: 1
     module: gdsfactory.components.ring_single_array
-    name: ring_single_array_d41d8cd9
+    name: ring_single_array
   straight_417ceb80:
     changed:
       cross_section:
@@ -348,7 +352,7 @@ info:
   function_name: ring_single_array
   info_version: 1
   module: gdsfactory.components.ring_single_array
-  name: ring_single_array_d41d8cd9
+  name: ring_single_array
 ports:
   o1:
     layer:
@@ -372,4 +376,4 @@ ports:
     orientation: 0
     port_type: optical
     width: 0.5
-version: 1
+version: 0.0.1

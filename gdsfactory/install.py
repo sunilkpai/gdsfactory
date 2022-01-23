@@ -5,7 +5,7 @@ import shutil
 import sys
 
 
-def install_gdsdiff():
+def install_gdsdiff() -> None:
     home = pathlib.Path.home()
     git_config_path = home / ".gitconfig"
     git_attributes_path = home / ".gitattributes"
@@ -44,13 +44,17 @@ def install_gdsdiff():
             f.write("*.gds diff=gds_diff\n")
 
 
-def install_klive():
+def get_klayout_path() -> pathlib.Path:
     if sys.platform == "win32":
         klayout_folder = "KLayout"
     else:
         klayout_folder = ".klayout"
     home = pathlib.Path.home()
-    dest_folder = home / klayout_folder / "pymacros"
+    return home / klayout_folder
+
+
+def install_klive() -> None:
+    dest_folder = get_klayout_path() / "pymacros"
     dest_folder.mkdir(exist_ok=True, parents=True)
     cwd = pathlib.Path(__file__).resolve().parent
     src = cwd / "klayout" / "pymacros" / "klive.lym"
@@ -64,7 +68,7 @@ def install_klive():
     print(f"klive installed to {dest}")
 
 
-def copy(src, dest):
+def copy(src: pathlib.Path, dest: pathlib.Path) -> None:
     """overwrite file or directory"""
     dest_folder = dest.parent
     dest_folder.mkdir(exist_ok=True, parents=True)
@@ -83,7 +87,7 @@ def copy(src, dest):
     print(f"{src} copied to {dest}")
 
 
-def install_generic_tech():
+def install_generic_tech() -> None:
     if sys.platform == "win32":
         klayout_folder = "KLayout"
     else:

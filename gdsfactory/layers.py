@@ -90,8 +90,8 @@ class LayerSet(LayerSetPhidl):
             description: Layer description.
             color: Hex code of color for the Layer.
             inverted: If true, inverts the Layer.
-            alpha: layer opacity between 0 and 1.
-            dither: KLayout dither style, only used in phidl.utilities.write_lyp().
+            alpha: layer opacity between 0 and 1 (0: invisible,  1: opaque).
+            dither: KLayout dither style, only used for phidl.utilities.write_lyp().
         """
         new_layer = LayerPhidl(
             gds_layer=gds_layer,
@@ -200,9 +200,9 @@ def _add_layer(entry, lys: LayerSet) -> LayerSet:
     # print(name, entry["xfill"], entry["fill-color"])
     # if entry["visible"] == "false" or entry["xfill"] == "false":
 
-    if entry["visible"] == "false":
+    if ("visible" in entry.keys()) and (entry["visible"] == "false"):
         alpha = 0
-    elif entry["transparent"] == "false":
+    elif ("transparent" in entry.keys()) and (entry["transparent"] == "false"):
         alpha = 1
     else:
         alpha = 0.5
@@ -256,6 +256,8 @@ def lyp_to_dataclass(lyp_filepath: Union[str, Path], overwrite: bool = True) -> 
 
     script = """
 import dataclasses
+from gdsfactory.types import Layer
+
 
 @dataclasses.dataclass
 class LayerMap():

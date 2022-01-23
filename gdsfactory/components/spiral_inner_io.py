@@ -1,5 +1,4 @@
-""" bends with grating couplers inside the spiral
-"""
+"""spiral with grating couplers inside to save space"""
 from typing import Optional, Tuple
 
 import numpy as np
@@ -37,7 +36,7 @@ def spiral_inner_io(
     **kwargs
 ) -> Component:
     """Returns Spiral with ports inside the spiral loop.
-    You can add grating couplers inside to save space.
+    You can add grating couplers inside .
 
     Args:
         N: number of loops
@@ -50,7 +49,8 @@ def spiral_inner_io(
         bend90_function
         bend180_function
         straight: straight function
-        length: computes spiral length from simple interpolation
+        length: spiral target length (um), overrides x_straight_inner_left
+            to match the length by a simple 1D interpolation
         cross_section:
         cross_section_bend: for the bends
         kwargs: cross_section settings
@@ -93,6 +93,7 @@ def spiral_inner_io(
         orientation=270,
         width=width,
         layer=layer,
+        cross_section=cross_section_bend,
     )
     p2 = gf.Port(
         name="o2",
@@ -100,6 +101,7 @@ def spiral_inner_io(
         orientation=270,
         width=width,
         layer=layer,
+        cross_section=cross_section_bend,
     )
 
     component.add_port(name="o1", port=p1)
@@ -244,18 +246,19 @@ def get_straight_length(
 
 
 if __name__ == "__main__":
-    # c = spiral_inner_io(radius=20, width=0.2)
-    cross_section_wide = gf.partial(gf.cross_section.strip_auto_widen)
+    c = spiral_inner_io(radius=20, width=0.2)
+    # cross_section_wide = gf.partial(gf.cross_section.strip_auto_widen)
 
-    c = spiral_inner_io_fiber_single(
-        # width=2,
-        # length=10e3,
-        # cross_section=cross_section_wide,
-        cross_section=gf.cross_section.pin,
-        waveguide_spacing=30,
-    )
-    c = gf.add_grating_couplers.add_grating_couplers_with_loopback_fiber_single(
-        c,
-        loopback_xspacing=100,
-    )
+    # c = spiral_inner_io_fiber_single(
+    #     # width=2,
+    #     # length=10e3,
+    #     # cross_section=cross_section_wide,
+    #     cross_section=gf.cross_section.pin,
+    #     waveguide_spacing=30,
+    #     length=20e3
+    # )
+    # c = gf.add_grating_couplers.add_grating_couplers_with_loopback_fiber_single(
+    #     c,
+    #     loopback_xspacing=100,
+    # )
     c.show()

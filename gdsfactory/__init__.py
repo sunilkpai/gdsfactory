@@ -26,14 +26,14 @@ from phidl.device_layout import Group, Path
 
 # NOTE: import order matters. Only change the order if you know what you are doing
 from gdsfactory.component import Component, ComponentReference
-from gdsfactory.config import CONFIG, call_if_func
+from gdsfactory.config import CONFIG, CONF, call_if_func
 from gdsfactory.port import Port
 from gdsfactory.cell import cell
 from gdsfactory.cell import cell_without_validator
 from gdsfactory.cell import clear_cache
 from gdsfactory.tech import LAYER
 from gdsfactory.show import show
-from gdsfactory.import_gds import import_gds
+from gdsfactory.read.import_gds import import_gds
 from gdsfactory.cross_section import CrossSection
 from gdsfactory.types import Label
 
@@ -48,7 +48,6 @@ from gdsfactory import path
 from gdsfactory import snap
 from gdsfactory import tech
 from gdsfactory import read
-from gdsfactory import remove
 from gdsfactory import layers
 from gdsfactory import add_termination
 from gdsfactory import add_grating_couplers
@@ -57,6 +56,8 @@ from gdsfactory import export
 from gdsfactory import geometry
 from gdsfactory import mask
 from gdsfactory import sweep
+from gdsfactory import add_ports
+from gdsfactory import write_cells
 
 from gdsfactory.tech import TECH
 from gdsfactory.add_tapers import add_tapers
@@ -75,6 +76,7 @@ c = components
 
 __all__ = [
     "CONFIG",
+    "CONF",
     "Component",
     "ComponentReference",
     "CrossSection",
@@ -89,6 +91,7 @@ __all__ = [
     "add_padding_container",
     "add_pins",
     "add_pins_to_references",
+    "add_ports",
     "add_tapers",
     "add_termination",
     "asserts",
@@ -116,16 +119,16 @@ __all__ = [
     "plot",
     "port",
     "read",
-    "remove",
     "routing",
     "show",
     "snap",
     "tech",
     "types",
     "sweep",
+    "write_cells",
     "Label",
 ]
-__version__ = "3.8.14"
+__version__ = "3.11.4"
 
 
 if __name__ == "__main__":

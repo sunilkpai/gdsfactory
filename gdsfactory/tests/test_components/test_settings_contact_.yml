@@ -11,6 +11,7 @@ cells:
       layer:
       - 1
       - 0
+      port_inclusion: 0
       port_type: electrical
       size:
       - 4
@@ -19,6 +20,7 @@ cells:
       layer:
       - 45
       - 0
+      port_inclusion: 0
       port_type: electrical
       size:
       - 11
@@ -39,6 +41,7 @@ cells:
       layer:
       - 1
       - 0
+      port_inclusion: 0
       port_type: electrical
       size:
       - 4
@@ -47,6 +50,7 @@ cells:
       layer:
       - 49
       - 0
+      port_inclusion: 0
       port_type: electrical
       size:
       - 11
@@ -67,6 +71,7 @@ cells:
       layer:
       - 1
       - 0
+      port_inclusion: 0
       port_type: electrical
       size:
       - 4
@@ -75,6 +80,7 @@ cells:
       layer:
       - 41
       - 0
+      port_inclusion: 0
       port_type: electrical
       size:
       - 11
@@ -83,7 +89,7 @@ cells:
     info_version: 1
     module: gdsfactory.components.compass
     name: compass_ef690c07
-  contact_d41d8cd9:
+  contact:
     changed: {}
     default:
       layer_port: null
@@ -135,7 +141,7 @@ cells:
     - 49
     - 0
     module: gdsfactory.components.contact
-    name: contact_d41d8cd9
+    name: contact
     size:
     - 11
     - 11
@@ -191,7 +197,7 @@ info:
   - 49
   - 0
   module: gdsfactory.components.contact
-  name: contact_d41d8cd9
+  name: contact
   size:
   - 11
   - 11
@@ -240,4 +246,4 @@ ports:
     orientation: 270
     port_type: electrical
     width: 11
-version: 1
+version: 0.0.1

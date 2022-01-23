@@ -74,7 +74,7 @@ class CrossSection(CrossSectionPhidl):
         for p in ports:
             if p is not None and p in self.ports:
                 raise ValueError(
-                    f"CrossSection.add(): a port named {p} already "
+                    f"CrossSection.add(): a port named {p!r} already "
                     "exists in this CrossSection, please rename port"
                 )
 
@@ -83,8 +83,8 @@ class CrossSection(CrossSectionPhidl):
 
         if name in self.aliases:
             raise ValueError(
-                'CrossSection.add(): an element named "%s" already '
-                "exists in this CrossSection, please change the name" % name
+                f"CrossSection.add(): an element named {name!r} already "
+                "exists in this CrossSection, please change the name"
             )
 
         new_segment = dict(
@@ -119,6 +119,9 @@ class CrossSection(CrossSectionPhidl):
     @classmethod
     def validate(cls, v):
         """pydantic assumes CrossSection is always valid"""
+        assert isinstance(
+            v, CrossSection
+        ), f"TypeError, Got {type(v)}, expecting CrossSection"
         return v
 
     def to_dict(self):
@@ -698,12 +701,29 @@ def rib_heater_doped_contact(
     layers_contact: Layers = (LAYER.NPP, LAYER.VIAC),
     cladding_offsets_contact: Tuple[float, ...] = (0, -0.2),
     slab_gap: float = 0.2,
+    slab_offset: float = 0,
     with_top_heater: bool = True,
     with_bot_heater: bool = True,
     **kwargs,
 ) -> CrossSection:
     """Returns rib cross_section with N++ doped heaters on both sides.
     dimensions from https://doi.org/10.1364/OE.27.010456
+
+    Args:
+        width:
+        layer:
+        heater_width:
+        heater_gap:
+        layer_slab:
+        layer_heater:
+        contact_width:
+        contact_gap:
+        layers_contact:
+        cladding_offsets_contact:
+        slab_gap: from heater edge
+        slab_offset: over the center of the slab
+        with_top_heater:
+        with_bot_heater:
 
     .. code::
 
@@ -724,13 +744,13 @@ def rib_heater_doped_contact(
     """
     if with_bot_heater and with_top_heater:
         slab_width = width + 2 * heater_gap + 2 * heater_width + 2 * slab_gap
-        slab_offset = 0
+        slab_offset = slab_offset
     elif with_top_heater:
         slab_width = width + heater_gap + heater_width + slab_gap
-        slab_offset = -slab_width / 2
+        slab_offset = slab_offset - slab_width / 2
     elif with_bot_heater:
         slab_width = width + heater_gap + heater_width + slab_gap
-        slab_offset = +slab_width / 2
+        slab_offset = slab_offset + slab_width / 2
 
     heater_offset = width / 2 + heater_gap + heater_width / 2
     contact_offset = width / 2 + contact_gap + contact_width / 2

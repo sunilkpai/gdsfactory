@@ -1,56 +1,25 @@
 cells:
-  manhattan_text_3f068da3:
-    changed:
-      justify: left
-      layer:
-      - 1
-      - 0
-      position:
-      - 0
-      - 0
-      size: 10
-      text: abcd
-    default:
-      justify: left
-      layer:
-      - 1
-      - 0
-      position:
-      - 0
-      - 0
-      size: 10
-      text: abcd
-    full:
-      justify: left
-      layer:
-      - 1
-      - 0
-      position:
-      - 0
-      - 0
-      size: 10
-      text: abcd
-    function_name: manhattan_text
-    info_version: 1
-    module: gdsfactory.components.manhattan_font
-    name: manhattan_text_3f068da3
-  text_rectangular_d41d8cd9:
+  text_rectangular:
     changed: {}
     default:
+      font:
+        function: rectangular_font
       justify: left
-      layers:
-      - - 1
-        - 0
+      layer:
+      - 1
+      - 0
       position:
       - 0
       - 0
       size: 10
       text: abcd
     full:
+      font:
+        function: rectangular_font
       justify: left
-      layers:
-      - - 1
-        - 0
+      layer:
+      - 1
+      - 0
       position:
       - 0
       - 0
@@ -59,24 +28,28 @@ cells:
     function_name: text_rectangular
     info_version: 1
     module: gdsfactory.components.text_rectangular
-    name: text_rectangular_d41d8cd9
+    name: text_rectangular
 info:
   changed: {}
   default:
+    font:
+      function: rectangular_font
     justify: left
-    layers:
-    - - 1
-      - 0
+    layer:
+    - 1
+    - 0
     position:
     - 0
     - 0
     size: 10
     text: abcd
   full:
+    font:
+      function: rectangular_font
     justify: left
-    layers:
-    - - 1
-      - 0
+    layer:
+    - 1
+    - 0
     position:
     - 0
     - 0
@@ -85,6 +58,6 @@ info:
   function_name: text_rectangular
   info_version: 1
   module: gdsfactory.components.text_rectangular
-  name: text_rectangular_d41d8cd9
+  name: text_rectangular
 ports: {}
-version: 1
+version: 0.0.1

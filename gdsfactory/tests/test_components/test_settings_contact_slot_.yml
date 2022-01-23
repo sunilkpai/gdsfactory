@@ -11,6 +11,7 @@ cells:
       layer:
       - 1
       - 0
+      port_inclusion: 0
       port_type: electrical
       size:
       - 4
@@ -19,6 +20,7 @@ cells:
       layer:
       - 45
       - 0
+      port_inclusion: 0
       port_type: electrical
       size:
       - 13
@@ -39,6 +41,7 @@ cells:
       layer:
       - 1
       - 0
+      port_inclusion: 0
       port_type: electrical
       size:
       - 4
@@ -47,6 +50,7 @@ cells:
       layer:
       - 41
       - 0
+      port_inclusion: 0
       port_type: electrical
       size:
       - 11
@@ -55,13 +59,15 @@ cells:
     info_version: 1
     module: gdsfactory.components.compass
     name: compass_ef690c07
-  contact_slot_d41d8cd9:
+  contact_slot:
     changed: {}
     default:
       enclosure: 1
       layer_offsets:
       - 0
       - 1
+      layer_offsetsx: null
+      layer_offsetsy: null
       layer_port: null
       layers:
       - - 41
@@ -84,6 +90,8 @@ cells:
       layer_offsets:
       - 0
       - 1
+      layer_offsetsx: null
+      layer_offsetsy: null
       layer_port: null
       layers:
       - - 41
@@ -104,7 +112,7 @@ cells:
     function_name: contact_slot
     info_version: 1
     module: gdsfactory.components.contact_slot
-    name: contact_slot_d41d8cd9
+    name: contact_slot
     size:
     - 11
     - 11
@@ -115,6 +123,8 @@ info:
     layer_offsets:
     - 0
     - 1
+    layer_offsetsx: null
+    layer_offsetsy: null
     layer_port: null
     layers:
     - - 41
@@ -137,6 +147,8 @@ info:
     layer_offsets:
     - 0
     - 1
+    layer_offsetsx: null
+    layer_offsetsy: null
     layer_port: null
     layers:
     - - 41
@@ -157,7 +169,7 @@ info:
   function_name: contact_slot
   info_version: 1
   module: gdsfactory.components.contact_slot
-  name: contact_slot_d41d8cd9
+  name: contact_slot
   size:
   - 11
   - 11
@@ -206,4 +218,4 @@ ports:
     orientation: 270
     port_type: electrical
     width: 13
-version: 1
+version: 0.0.1

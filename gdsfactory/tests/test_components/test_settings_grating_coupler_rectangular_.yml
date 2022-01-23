@@ -12,6 +12,7 @@ cells:
       layer:
       - 1
       - 0
+      port_inclusion: 0
       port_type: electrical
       size:
       - 4
@@ -20,6 +21,7 @@ cells:
       layer:
       - 1
       - 0
+      port_inclusion: 0
       port_type: null
       size:
       - 0.375
@@ -28,7 +30,7 @@ cells:
     info_version: 1
     module: gdsfactory.components.compass
     name: compass_fa26bb75
-  grating_coupler_rectang_4d760e29:
+  grating_coupler_rectangular:
     changed: {}
     default:
       fill_factor: 0.5
@@ -71,7 +73,7 @@ cells:
     function_name: grating_coupler_rectangular
     info_version: 1
     module: gdsfactory.components.grating_coupler_rectangular
-    name: grating_coupler_rectang_4d760e29
+    name: grating_coupler_rectangular
     polarization: te
     wavelength: 1.55
   rectangle_fa26bb75:
@@ -182,7 +184,7 @@ info:
   function_name: grating_coupler_rectangular
   info_version: 1
   module: gdsfactory.components.grating_coupler_rectangular
-  name: grating_coupler_rectang_4d760e29
+  name: grating_coupler_rectangular
   polarization: te
   wavelength: 1.55
 ports:
@@ -202,10 +204,10 @@ ports:
     - 1
     - 0
     midpoint:
-    - 157.125
+    - 157.219
     - 0
     name: vertical_te
     orientation: 0
     port_type: vertical_te
     width: 1
-version: 1
+version: 0.0.1

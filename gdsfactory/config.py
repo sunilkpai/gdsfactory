@@ -11,7 +11,8 @@ You can access the config dictionary with `print_config`
 
 """
 
-__version__ = "3.8.14"
+__version__ = "3.11.4"
+import io
 import json
 import os
 import pathlib
@@ -52,17 +53,27 @@ logger.info(__version__)
 logger.add(sink=logpath)
 
 
+default_config = io.StringIO(
+    """
+plotter: matplotlib
+"""
+)
+
+
 class Paths:
     module = module_path
     repo = repo_path
     sparameters = repo_path / "sparameters"
     results_tidy3d = home / ".tidy3d"
+    klayout = module / "klayout"
+    klayout_tech = klayout / "tech"
+    klayout_lyp = klayout_tech / "layers.lyp"
 
 
 def read_config(
     yamlpaths: Iterable[PathType] = (yamlpath_default, yamlpath_home, yamlpath_cwd),
 ) -> omegaconf.DictConfig:
-    CONFIG = OmegaConf.create()
+    CONFIG = OmegaConf.load(default_config)
     for yamlpath in set(yamlpaths):
         if os.access(yamlpath, os.R_OK) and yamlpath.exists():
             logger.info(f"loading tech config from {yamlpath}")

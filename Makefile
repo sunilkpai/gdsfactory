@@ -32,6 +32,9 @@ test-force:
 	rm -rf gdsfactory/samples/pdk/test_fab_c.gds
 	pytest --force-regen
 
+test-meep:
+	pytest gdsfactory/simulation/gmeep
+
 test-plugins:
 	pytest gdsfactory/simulation/gmeep gdsfactory/simulation/modes
 
@@ -62,6 +65,19 @@ pyenv3:
 	python -V # Print out python version for debugging
 	which python # Print out which python for debugging
 	python setup.py develop
+
+docker-debug:
+	docker run -it joamatab/gdsfactory sh
+
+docker-build:
+	docker build -t joamatab/gdsfactory .
+
+docker-run:
+	docker run \
+		-p 8888:8888 \
+		-p 8082:8082 \
+		-e JUPYTER_ENABLE_LAB=yes \
+		joamatab/gdsfactory:latest
 
 conda:
 	conda env create -f environment.yml
@@ -103,5 +119,6 @@ codestyle:
 
 doc:
 	python docs/write_components_doc.py
+
 
 .PHONY: gdsdiff build conda

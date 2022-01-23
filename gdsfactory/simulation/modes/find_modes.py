@@ -49,7 +49,7 @@ def find_modes(
         nclad: clad material refractive index
         sy: simulation region width (um)
         sz: simulation region height (um)
-        res: resolution (pixels/um)
+        resolution: resolution (pixels/um)
         nmodes: number of modes
 
     Returns: Dict[mode_number, Mode]
@@ -82,7 +82,7 @@ def find_modes(
         omega * 2.02,
         omega * 0.01,
         omega * 10,
-        mpb.output_poynting_x,
+        # mpb.output_poynting_x,
         mpb.display_yparities,
         mpb.display_group_velocities,
     )
@@ -101,9 +101,20 @@ def find_modes(
             E=mode_solver.get_efield(i),
             H=mode_solver.get_hfield(i),
             eps=mode_solver.get_epsilon().T,
+            y=np.linspace(
+                -1 * mode_solver.info["sy"] / 2,
+                mode_solver.info["sy"] / 2,
+                int(mode_solver.info["sy"] * mode_solver.info["resolution"]),
+            ),
+            z=np.linspace(
+                -1 * mode_solver.info["sz"] / 2,
+                mode_solver.info["sz"] / 2,
+                int(mode_solver.info["sz"] * mode_solver.info["resolution"]),
+            ),
         )
         for index, i in enumerate(range(mode_number, mode_number + nmodes))
     }
+
     return modes
 
 

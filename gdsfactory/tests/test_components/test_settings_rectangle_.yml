@@ -12,6 +12,7 @@ cells:
       layer:
       - 1
       - 0
+      port_inclusion: 0
       port_type: electrical
       size:
       - 4
@@ -20,6 +21,7 @@ cells:
       layer:
       - 1
       - 0
+      port_inclusion: 0
       port_type: electrical
       size:
       - 4
@@ -28,7 +30,7 @@ cells:
     info_version: 1
     module: gdsfactory.components.compass
     name: compass_896ae020
-  rectangle_d41d8cd9:
+  rectangle:
     changed: {}
     default:
       centered: false
@@ -51,7 +53,7 @@ cells:
     function_name: rectangle
     info_version: 1
     module: gdsfactory.components.rectangle
-    name: rectangle_d41d8cd9
+    name: rectangle
 info:
   changed: {}
   default:
@@ -75,7 +77,7 @@ info:
   function_name: rectangle
   info_version: 1
   module: gdsfactory.components.rectangle
-  name: rectangle_d41d8cd9
+  name: rectangle
 ports:
   e1:
     layer:
@@ -121,4 +123,4 @@ ports:
     orientation: 270
     port_type: electrical
     width: 4
-version: 1
+version: 0.0.1

@@ -20,7 +20,6 @@ iso_lines_coarse1:
 """
 import collections
 import os
-import sys
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple, Union
 
@@ -32,15 +31,11 @@ from omegaconf import OmegaConf
 
 from gdsfactory.autoplacer import text
 from gdsfactory.autoplacer.helpers import CELLS, import_cell, load_gds
-from gdsfactory.config import CONFIG
+from gdsfactory.config import CONFIG, logger
+from gdsfactory.types import NSEW
 
 UM_TO_GRID = 1e3
 DEFAULT_BBOX_LAYER_IGNORE = [(8484, 8484)]
-
-
-def _print(*args, **kwargs):
-    print(*args, **kwargs)
-    sys.stdout.flush()
 
 
 def to_grid(x: float64, um_to_grid: int = UM_TO_GRID) -> int:
@@ -115,13 +110,13 @@ class SizeInfo:
 
 def placer_grid_cell_refs(
     cells,
-    cols=1,
-    rows=1,
-    dx=10.0,
-    dy=10.0,
-    x0=0,
-    y0=0,
-    um_to_grid=UM_TO_GRID,
+    cols: int = 1,
+    rows: int = 1,
+    dx: float = 10.0,
+    dy: float = 10.0,
+    x0: float = 0,
+    y0: float = 0,
+    um_to_grid: float = UM_TO_GRID,
     **settings,
 ):
     """cells: list of cells - order matters for placing"""
@@ -151,8 +146,8 @@ def pack_row(
     nb_cols: Optional[int] = None,
     x0: Union[float, int] = 0,
     y0: Union[float, int] = 0,
-    align_x: str = "W",
-    align_y: str = "S",
+    align_x: NSEW = "W",
+    align_y: NSEW = "S",
     margin: Union[float, int] = 20,
     margin_x: Optional[Union[float, int]] = None,
     margin_y: Optional[Union[float, int]] = None,
@@ -162,6 +157,7 @@ def pack_row(
     rotation: int = 0,
 ) -> List[CellInstArray]:
     """Pack row.
+
     Args:
         cells: a list of cells (size n)
         row_ids: a list of row ids (size n)
@@ -172,7 +168,7 @@ def pack_row(
             if set, use this period instead of computing the component spacing
             from the margin and the component dimension
 
-    Returns:list of cell references
+    Returns: list of cell references
     """
     si_list = [SizeInfo(c, um_to_grid=um_to_grid) for c in cells]
     heights = [si.height for si in si_list]
@@ -194,9 +190,8 @@ def pack_row(
 
     if len(cells) != len(row_ids):
         raise ValueError(
-            "Each cell should be assigned a row id.         Got {} cells for {} row ids".format(
-                len(cells), len(row_ids)
-            )
+            "Each cell should be assigned a row id. "
+            f"Got {len(cells)} cells for {len(row_ids)} row ids"
         )
 
     # Find the height of each row to fit the cells
@@ -235,17 +230,16 @@ def pack_row(
                 _y = to_grid(y - component_origin[1], um_to_grid)
 
                 transform = pya.Trans(rotation / 2, 0, _x, _y)
-                # transform = pya.Trans(_x, _y)
                 c_ref = pya.CellInstArray(c.cell_index(), transform)
                 components += [c_ref]
 
             except BaseException:
-                print(x, component_origin[0], um_to_grid)
-                print("ISSUE PLACING AT", _x, _y)
+                logger.error(x, component_origin[0], um_to_grid)
+                logger.error("ISSUE PLACING AT", _x, _y)
                 if align_x not in ["W", "E"]:
-                    _print("align_x should be `W`, `E` or a float")
+                    logger.error("align_x should be `W`, `E` or a float")
                 if align_y not in ["N", "S"]:
-                    _print("align_y should be `N`, `S` or a float")
+                    logger.error("align_y should be `N`, `S` or a float")
                 # raise
 
             dx = si.width + margin_x if period_x is None else period_x
@@ -270,14 +264,15 @@ def pack_col(
     nb_rows: Optional[int] = None,
     x0: float = 0,
     y0: float = 0,
-    align_x: str = "W",
-    align_y: str = "S",
+    align_x: NSEW = "W",
+    align_y: NSEW = "S",
     margin: int = 20,
     margin_x: Optional[int] = None,
     margin_y: Optional[int] = None,
     um_to_grid: int = UM_TO_GRID,
     period_x: Optional[float] = None,
     period_y: Optional[float] = None,
+    rotation: int = 0,
 ) -> List[CellInstArray]:
     """
 
@@ -309,9 +304,8 @@ def pack_col(
 
     if len(cells) != len(col_ids):
         raise ValueError(
-            "Each cell should be assigned a row id.         Got {} cells for {} col ids".format(
-                len(cells), len(col_ids)
-            )
+            "Each cell should be assigned a row id. "
+            f"Got {len(cells)} cells for {len(col_ids)} col ids"
         )
 
     # Find the width of each column to fit the cells
@@ -350,7 +344,8 @@ def pack_col(
             _y = to_grid(y - component_origin[1], um_to_grid=um_to_grid)
 
             try:
-                transform = pya.Trans(_x, _y)
+                transform = pya.Trans(rotation / 2, 0, _x, _y)
+                # transform = pya.Trans(_x, _y)
                 c_ref = pya.CellInstArray(c.cell_index(), transform)
                 components += [c_ref]
             except BaseException:
@@ -375,7 +370,14 @@ def pack_col(
 
 
 def placer_fixed_coords(
-    cells, x, y, x0=0, y0=0, do_permutation=False, um_to_grid=UM_TO_GRID, **kwargs
+    cells,
+    x,
+    y,
+    x0: float = 0,
+    y0: float = 0,
+    do_permutation: bool = False,
+    um_to_grid=UM_TO_GRID,
+    **kwargs,
 ):
     """place cells using a list of coordinates"""
 
@@ -448,16 +450,12 @@ def load_doe(doe_name: str, doe_root: Path) -> List[Layout]:
             line = lines[0]
 
             if line.startswith("TEMPLATE:"):
-                """
-                If using a template, load the GDS from DOE folder used as a template
-                """
+                # If using a template, load the GDS from DOE folder used as a template
                 template_name = line.split(":")[1].strip()
                 return load_doe(template_name, doe_root)
 
             else:
-                """
-                Otherwise load the GDS from the current folder
-                """
+                # Otherwise load the GDS from the current folder
                 component_names = line.split(" , ")
                 gdspaths = [
                     os.path.join(doe_dir, name + ".gds") for name in component_names
@@ -520,11 +518,11 @@ def place_from_yaml(
     root_does: Path = CONFIG["cache_doe_directory"],
     precision: float = 1e-9,
     fontpath: Path = text.FONT_PATH,
-    default_align_x: str = "W",
-    default_align_y: str = "S",
+    default_align_x: NSEW = "W",
+    default_align_y: NSEW = "S",
     default_margin: int = 10,
-    default_x0: str = "E",
-    default_y0: str = "S",
+    default_x0: NSEW = "E",
+    default_y0: NSEW = "S",
 ) -> Cell:
     """Returns a gds cell composed of DOEs/components given in a yaml file
     allows for each DOE to have its own x and y spacing (more flexible than method1)
@@ -743,9 +741,9 @@ def place_from_yaml(
         add_doe_visual_label = doe["add_doe_visual_label"]
 
         if add_doe_label:
-            label_layer_index, label_layer_datatype = layer_doe_label
+            layer_label_index, layer_label_datatype = layer_doe_label
             layer_index = top_level.layout().insert_layer(
-                pya.LayerInfo(label_layer_index, label_layer_datatype)
+                pya.LayerInfo(layer_label_index, layer_label_datatype)
             )
             # Add the name of the DOE at the center of the cell
             _p = doe_instance.bbox(top_level_layout).center()
@@ -773,7 +771,7 @@ def place_and_write(
     filepath_yaml, root_does=CONFIG["cache_doe_directory"], filepath_gds="top_level.gds"
 ):
     c = place_from_yaml(filepath_yaml, root_does)
-    _print("writing...")
+    logger.info("writing...")
     c.write(filepath_gds)
 
 

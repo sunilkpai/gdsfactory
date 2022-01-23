@@ -12,6 +12,7 @@ cells:
       layer:
       - 1
       - 0
+      port_inclusion: 0
       port_type: electrical
       size:
       - 4
@@ -20,6 +21,7 @@ cells:
       layer:
       - 2
       - 0
+      port_inclusion: 0
       port_type: electrical
       size:
       - 3
@@ -41,6 +43,7 @@ cells:
       layer:
       - 1
       - 0
+      port_inclusion: 0
       port_type: electrical
       size:
       - 4
@@ -49,6 +52,7 @@ cells:
       layer:
       - 1
       - 0
+      port_inclusion: 0
       port_type: electrical
       size:
       - 3
@@ -80,7 +84,7 @@ cells:
     info_version: 1
     module: gdsfactory.components.cross
     name: cross_0d76638b
-  cross_0d76638b_copy_lay_1c385586:
+  cross_0d76638b_copy_layers:
     changed: {}
     child:
       changed:
@@ -124,7 +128,7 @@ cells:
     function_name: copy_layers
     info_version: 1
     module: gdsfactory.components.copy_layers
-    name: cross_0d76638b_copy_lay_1c385586
+    name: cross_0d76638b_copy_layers
   cross_8e0fe979:
     changed:
       layer:
@@ -252,6 +256,6 @@ info:
   function_name: copy_layers
   info_version: 1
   module: gdsfactory.components.copy_layers
-  name: cross_0d76638b_copy_lay_1c385586
+  name: cross_0d76638b_copy_layers
 ports: {}
-version: 1
+version: 0.0.1

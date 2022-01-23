@@ -1,5 +1,5 @@
 cells:
-  spiral_circular_d41d8cd9:
+  spiral_circular:
     changed: {}
     default:
       layer:
@@ -23,7 +23,7 @@ cells:
     info_version: 1
     length: 1694.813
     module: gdsfactory.components.spiral_circular
-    name: spiral_circular_d41d8cd9
+    name: spiral_circular
 info:
   changed: {}
   default:
@@ -48,7 +48,7 @@ info:
   info_version: 1
   length: 1694.813
   module: gdsfactory.components.spiral_circular
-  name: spiral_circular_d41d8cd9
+  name: spiral_circular
 ports:
   o1:
     layer:
@@ -72,4 +72,4 @@ ports:
     orientation: 180
     port_type: optical
     width: 0.5
-version: 1
+version: 0.0.1

@@ -1,8 +1,8 @@
 cells:
-  array_62d6385d:
+  array_dacd7306:
     changed:
       columns: 1
-      component: pad_d41d8cd9
+      component: pad
       rows: 3
       spacing:
       - 0
@@ -17,7 +17,7 @@ cells:
       - 150
     full:
       columns: 1
-      component: pad_d41d8cd9
+      component: pad
       rows: 3
       spacing:
       - 0
@@ -25,7 +25,7 @@ cells:
     function_name: array
     info_version: 1
     module: gdsfactory.components.array
-    name: array_62d6385d
+    name: array_dacd7306
   compass_83a2e6d6:
     changed:
       layer:
@@ -39,6 +39,7 @@ cells:
       layer:
       - 1
       - 0
+      port_inclusion: 0
       port_type: electrical
       size:
       - 4
@@ -47,6 +48,7 @@ cells:
       layer:
       - 49
       - 0
+      port_inclusion: 0
       port_type: electrical
       size:
       - 22
@@ -243,4 +245,4 @@ info:
   module: gdsfactory.components.pad_gsg
   name: pad_gsg_short_a5a92d3b
 ports: {}
-version: 1
+version: 0.0.1

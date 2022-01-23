@@ -1,22 +1,260 @@
 # CHANGELOG
 
-## TODO
+## 3.11.4
 
-- component needs to export the factory names
-- fix FIXMEs
-- add example on how to customize visualization of a component
+- Remove numpy.typing from snap.py to be compatible with minimum version of numpy
+
+## 3.11.3
+
+- rename `res` to `resolution` in simulation.modes to be consistent with simulation.gmeep
+
+## 3.11.2
+
+- add plugins to notebooks and coverage
+
+## 3.11.0
+
+- get_sparameters_path filepath based on component_name + simulation_settings hash
+- move gdsfactory.simulation.write_sparameters_lumerical to gdsfactory.simulation.lumerical.write_sparameters_lumerical
+- Sparameters are all lowercase (both for meep and lumerical plugins)
+
+## 3.10.12
+
+- write_sparameters_lumerical allows passing material refractive index or any material in Lumerical's material database
+
+## 3.10.11
+
+- improve docs
+
+## 3.10.10
+
+- cell name with no parameters passed only includes prefix [PR](https://github.com/gdsfactory/gdsfactory/pull/158)
+- write_sparameters_meep can exploit symmetries [PR](https://github.com/gdsfactory/gdsfactory/pull/157)
+
+## 3.10.9
+
+- add tests for `write_sparameters_meep_mpi` and  `write_sparameters_meep_mpi_pool` in `gdsfactory.simulation.gmeep` module
+- `write_sparameters_meep_mpi` has `wait_to_finish` flag
+
+## 3.10.8
+
+- improve meep simulation interface documentation and functions
+- expose new `write_sparameters_meep_mpi` and  `write_sparameters_meep_mpi_pool` in `gdsfactory.simulation.gmeep` module
+- `get_sparameters_path` can also accept a layer_stack
+
+## 3.10.7
+
+- fix crossing hard coded layers. Add cross_section setting to ports so that they can be extended.
+- extend_ports creates cross_section with port_width and layer, if port has no cross_section and extend_ports does not have a specific cross_section
+
+## 3.10.6
+
+- add mzi_pads_center to components
+
+## 3.10.5
+
+- fix add_ports_from_markers_center port location for square ports, depending on inside parameter
+
+## 3.10.4
+
+- use matplotlib for default plotter instead of holoviews
+- add_ports default prefix is 'o' for optical and 'e' for electrical ports
+
+## 3.10.3
+
+- [plot Sparameters uses lowercase s11, s21 ...](https://github.com/gdsfactory/gdsfactory/pull/146)
+
+## 3.10.2
+
+- write_cells in gf.write_cells uses gdspy interface directly
+- gf.import_gds has an optional gdsdir argument
+- remove unused max_name_length parameter in gf.import_gds
+- bring back matplotlib as the default plotter backend. Holoviews does not work well with some `sphinx.autodoc` docs
+- add_fiber_array prints warning if grating coupler port is not facing west
+
+## 3.10.1
+
+- You can set up the default plotter from the gdsfactory config `gf.CONF.plotter = 'matplotlib'`
+- [PR 142](https://github.com/gdsfactory/gdsfactory/pull/142)
+    * dispersive flag to meep simulations
+    * fixed bug where adding a layer would throw an error if "visible" or "transparent" were undefined in the .lyp file
+- remove p_start (starting period) from grating_coupler_elliptical
+
+## 3.10.0
+
+- add Component.ploth() to plot with holoviews (inspired by dphox)
+- Component.plot(plotter='holoviews') accepts plotter argument for plotting backend (matplotlib, qt or holoviews)
+- use holoviews as the default plotting backend
+- remove clear_cache from Component.plot() and Component.show(), it's easier to just do `gf.clear_cache()`
+- remove `Component.plotqt` as the qt plotter is now available with `Component.plot(plotter='qt')`
+- gf.geometry.boolean works with tuples of components or references as well as single component or Reference. Overcome phidl bug, where tuples are not trated as lists.
+- Before plotting make sure we recompute the bounding box
+- YAML mask definition allows using `vars` for global variables
+- grating_coupler_rectangular first teeth starts next to the taper
+
+## 3.9.28
+
+- seal_ring accepts bbox instead of component
+- die_bbox_frame accepts bbox
+- die_bbox: rename text_position to text_anchor
+- die_bbox: text_anchor accepts Literal instead of string
+
+## 3.9.27
+
+- Add [sidewall angles in MPB](https://github.com/gdsfactory/gdsfactory/pull/136)
+
+## 3.9.26
+
+- add some extra kwargs (with_taper1, with_taper2) to straight_heater_doped_rib
+- add slab offset kwargs to cross_section.rib_heater_doped_contact
+
+## 3.9.25
+
+- `gf.components.contact_slot` accepts optional layer_offsetsx and layer_offsetsy
+- extend_ports cross_section is optional, and overrides port cross_section
+
+## 3.9.23
+
+- validate cross_section
+- update requirements
+- add acks in README
+
+## 3.9.22
+
+- add `gf.read.from_dphox`
+- update requirements.txt
+
+## 3.9.21
+
+- thanks to @thomasdorch [PR](https://github.com/gdsfactory/gdsfactory/pull/128) you can now use Meep's material database in your mode and FDTD simulations
+
+## 3.9.20
+
+- add `loopback_xspacing` to `gf.routing.add_fiber_single`
+
+## 3.9.19
+
+- add `Component.get_setting()` which looks inside info, info.full and child_info
+- add `gf.function.add_settings_label` decorator
+
+## 3.9.18
+
+- rename get_sparametersNxN to write_sparameters_meep, to be consistent with write_sparameters_lumerical function name
+
+## 3.9.17
+
+- meep interface stores simulation metadata
+
+## 3.9.16
+
+- meep interface improvements
+  - add run=True flag, if run=False, plots simulation
+- docker includes mpi version of meep
+
+## 3.9.15
+
+- meep interface improvements
+  - add test Sparameters file dataframe
+- lumerical interface improvements (consitent with meep)
+  - wavelengths in um
+  - Sparameters starts with lowercase
+
+## 3.9.14
+
+- fix seal_ring snap_to_grid to 2nm
+- add Component.version and Component.changelog
+- Component.to_dict() exports version
+- add ring_single_heater and ring_double_heater to components
+- add port_inclusion to pad and compass
+
+## 3.9.13
+
+- fix seal_ring snap_to_grid to 2nm
+
+## 3.9.12
+
+- fix text_rectangular_multi_layer layers
+
+## 3.9.11
+
+- add label_prefix to test and measurement labels
+
+## 3.9.10
+
+- add `gf.mask.merge_yaml` to merge yaml metadata
+- rename `pcm_optical` to `cdsem_all`
+- add `cdsem_coupler`
+- Component.copy hash cache=True flag that adds new copies to CACHE (similarly to import_gds) to avoid duplicated cells
+
+## 3.9.9
+
+- pack_row in klayout_yaml_placer also accepts rotation
+- placer uses Literal ('N', 'S', 'E', 'W') from gf.types
+- rename label_layer as layer_label for consistency
+
+## 3.9.8
+
+- better DRC messages
+- write_drc allows you to define the shortcut
+- fix resistance_sheet offset
+- add comments to build does flow
+
+## 3.9.7
+
 - build docker container
-- remove kwargs from most components as a way to customize cross_sections to get more intuitive error messages
+- recommend building triangle with conda forge instead of pip for conda based distributions
+- add `pip install gdsfactory[pip]` as a pip-based alternative of `pip install gdsfactory[full]`
 
-Maybe:
+## 3.9.6
 
-- enable routing with 180euler and Sbends
-- electrical routing
-- pads have a port with `pad` name on the center of the pad
-- xdoctest
-- mypy passing
-- pass force-regen flag from pytest
-- cell decorator includes hashes all the soruce code from a function to ensure no name conflicts happen when merging old and future cells
+- Component.show() writes component in a different tempfile everytime. This avoids the `reload` question prompt from klayout.
+- update klive to 0.0.7 to keep the same layers active between sessions
+
+## 3.9.5
+
+- imported cell names get incremented (starting on index = 1) with a `$` (based on Klayout naming convention)
+- add test for flatten = True
+- raise ValueError if the passed name is already on any CAHE (CACHE_IMPORTED or CACHE)
+- avoid duplicate cells decorating import_gds with functools.lru_cache
+- show accepts `**kwargs` for write_gds
+- simplify decorator in @cell (does not change name)
+
+## 3.9.4
+
+- imported cell names get incremented (starting on index = 0) as we find them also in the CACHE. This avoids duplicated cell names.
+
+## 3.9.3
+
+- better error messages using f"{component!r}" to get `'component_name'`
+- import*gds avoids duplicated cells by checking CACHE_IMPORTED and adding and underscore `*` suffix in case there are some name conflicts.
+- add `Component.lock()` and `Component.unlock()` allows you to modify component after adding it into CACHE
+- add `gf.geometry.check_duplicated_cells` to check duplicated cells. Thanks to Klayout
+- fix `mzi_with_arms`, before it had `delta_length` in both arms
+
+## 3.9.2
+
+- increase `gf.routing.get_route_electrical` default min_straight_length from 10nm to 2um
+- rename text_rectangular to text_rectangular_multi_layer
+- rename manhattan_text to text_rectangular
+
+## 3.9.1
+
+- gf.import_gds updates info based on `kwargs`. In case you want to specify (wavelength, test_protocol...)
+- store gf.import_gds name
+
+## 3.9.0
+
+- move add_ports_from_markers functions from `gf.import_gds` to `gf.add_ports`
+- move write_cells functions from `gf.import_gds` to `gf.write_cells`
+- move `gf.import_gds` to `gf.read.import_gds`. keep `gf.import_gds` as a link to `gf.read.import_gds`
+- combine gf.read.from_gds with gf.import_gds
+- add logger.info for write_gds, write_gds_with_metadata, gf.read.import_gds, klive.show()
+
+## 3.8.15
+
+- gf.read.from_gds passes kwargs to gf.import_gds
+- rename grating_coupler_loss to grating_coupler_loss_fiber_array4 gf.components
+- add grating_coupler_loss_fiber_single to components
 
 ## 3.8.14
 
@@ -37,7 +275,6 @@ Maybe:
 ## 3.8.10
 
 - get_netlist works even with cells that have have no info.full or info.changed (not properly decorated with cell decorator)
-
 
 ## 3.8.9
 
@@ -117,7 +354,7 @@ Maybe:
 ## 3.7.5
 
 - add `add_tapers_cross_section` to taper component cross_sections
-- letter `v` in text_rectangular is now DRC free
+- letter `v` in text_rectangular_multi_layer is now DRC free
 
 ## 3.7.4
 
@@ -216,7 +453,7 @@ Maybe:
 ## 3.6.0
 
 - snap_to_grid_nm waypoints in round_corners to avoid 1nm gaps in some routes
-- add `gf.components.text_rectangular`
+- add `gf.components.text_rectangular_multi_layer`
 - add `gf.components.rectangle_with_slits`
 
 ## 3.5.12
@@ -494,7 +731,7 @@ Maybe:
 - add cross_section property to ports
 - `gdsfactory/routing/fanout.py` passes cross_section settings from port into bend_s
 - fix manhattan text, avoid creating duplicated cells
-- fix pcm_optical
+- fix cdsem_all
 
 ## 3.1.4
 

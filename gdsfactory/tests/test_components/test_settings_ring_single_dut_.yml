@@ -38,6 +38,7 @@ cells:
       radius: 5
     default:
       bend: null
+      bend_cross_section: null
       coupler90:
         function: coupler90
       coupler_straight:
@@ -49,6 +50,7 @@ cells:
       radius: 5
     full:
       bend: null
+      bend_cross_section: null
       coupler90:
         function: coupler90
       coupler_straight:
@@ -134,7 +136,7 @@ cells:
     name: taper_2e9853cc
     width1: 0.5
     width2: 3
-  taper_2e9853cc_ring_sin_7b254a70:
+  taper_2e9853cc_ring_single_dut:
     changed: {}
     child:
       changed:
@@ -197,7 +199,7 @@ cells:
     function_name: ring_single_dut
     info_version: 1
     module: gdsfactory.components.ring_single_dut
-    name: taper_2e9853cc_ring_sin_7b254a70
+    name: taper_2e9853cc_ring_single_dut
 info:
   changed: {}
   child:
@@ -261,7 +263,7 @@ info:
   function_name: ring_single_dut
   info_version: 1
   module: gdsfactory.components.ring_single_dut
-  name: taper_2e9853cc_ring_sin_7b254a70
+  name: taper_2e9853cc_ring_single_dut
 ports:
   o1:
     layer:
@@ -285,4 +287,4 @@ ports:
     orientation: 0
     port_type: optical
     width: 0.5
-version: 1
+version: 0.0.1

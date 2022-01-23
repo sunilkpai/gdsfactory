@@ -12,6 +12,7 @@ cells:
       layer:
       - 1
       - 0
+      port_inclusion: 0
       port_type: electrical
       size:
       - 4
@@ -20,6 +21,7 @@ cells:
       layer:
       - 1
       - 0
+      port_inclusion: 0
       port_type: electrical
       size:
       - 1300
@@ -55,7 +57,7 @@ cells:
     info_version: 1
     module: gdsfactory.components.rectangle
     name: rectangle_6df08d23
-  rectangle_6df08d23_die__93f9a7c5:
+  rectangle_6df08d23_die_bbox:
     changed: {}
     child:
       changed:
@@ -97,7 +99,7 @@ cells:
       padding: 10
       street_length: 1000
       street_width: 100
-      text_location: SW
+      text_anchor: sw
       text_size: 100
     full:
       component:
@@ -112,12 +114,12 @@ cells:
       padding: 10
       street_length: 1000
       street_width: 100
-      text_location: SW
+      text_anchor: sw
       text_size: 100
     function_name: die_bbox
     info_version: 1
     module: gdsfactory.components.die_bbox
-    name: rectangle_6df08d23_die__93f9a7c5
+    name: rectangle_6df08d23_die_bbox
 info:
   changed: {}
   child:
@@ -160,7 +162,7 @@ info:
     padding: 10
     street_length: 1000
     street_width: 100
-    text_location: SW
+    text_anchor: sw
     text_size: 100
   full:
     component:
@@ -175,11 +177,11 @@ info:
     padding: 10
     street_length: 1000
     street_width: 100
-    text_location: SW
+    text_anchor: sw
     text_size: 100
   function_name: die_bbox
   info_version: 1
   module: gdsfactory.components.die_bbox
-  name: rectangle_6df08d23_die__93f9a7c5
+  name: rectangle_6df08d23_die_bbox
 ports: {}
-version: 1
+version: 0.0.1
