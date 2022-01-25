@@ -21,9 +21,9 @@ jobs:
           pip install .[dev]
       - name: Test with pytest
         run: |
-          pip install pytest
-          pip install pytest-cov
-          pytest --cov=gdsfactory --cov-report=xml --cov-config=.coveragerc gdsfactory
+          poetry install pytest
+          poetry install pytest-cov
+          poetry run pytest --cov=gdsfactory --cov-report=xml --cov-config=.coveragerc gdsfactory
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v2
         with:
