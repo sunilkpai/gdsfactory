@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "gdsfactory"
-version = "3.8.14"
+version = "3.11.7"
 description = "library for GDS layouts"
 authors = ["gdsfactory community"]
 license = "MIT"
@@ -30,6 +30,7 @@ toolz = "^0.11.2"
 trimesh = "^3.9.36"
 typing-extensions = "^4.0.1"
 xmltodict = "^0.12.0"
+klayout = "^0.27.1"
 
 [tool.poetry.dev-dependencies]
 doc8 = {version = "^0.10.1", optional = true}
@@ -58,7 +59,7 @@ xdoctest = {version = "^0.15.10", optional = true}
 tox = {version = "^3.24.4", optional = true}
 
 [tool.poetry.extras]
-full = ['klayout', 'tidy3d', 'triangle']
+full = ['tidy3d', 'triangle']
 
 
 [tool.poetry.scripts]

@@ -1,4 +1,4 @@
-# gdsfactory 3.11.4
+# gdsfactory 3.11.7
 
 ![docs](https://github.com/gdsfactory/gdsfactory/actions/workflows/pages.yml/badge.svg)
 [![](https://img.shields.io/pypi/v/gdsfactory)](https://pypi.org/project/gdsfactory/)
@@ -30,7 +30,6 @@ It also can output components settings (that you can use for measurement and dat
 
 ![](https://i.imgur.com/XbhWJDz.png)
 
-## Documentation
 
 For Photonics IC layout I used [IPKISS](https://github.com/jtambasco/ipkiss) for 7 years.
 
@@ -94,31 +93,30 @@ How can you learn more?
 
 gdsfactory is written in python and requires some basic knowledge of python. If you are new to python you can find many [books](https://jakevdp.github.io/PythonDataScienceHandbook/index.html), [youTube videos](https://www.youtube.com/c/anthonywritescode) and [courses](https://github.com/joamatab/practical-python) available online.
 
-Once you are familiar with python, you can also:
-
-- [read online docs](https://gdsfactory.github.io/gdsfactory/)
-- run gdsfactory/samples
-- run [docs/notebooks](https://gdsfactory.readthedocs.io/en/latest/notebooks.html)
 
 ## Installation
 
 First, you need to install [klayout](https://www.klayout.de/) to visualize the GDS files that you create.
 
-gdsfactory works for python>=3.7 in Windows, MacOs and Linux.
+gdsfactory works for python versions 3.7, 3.8 and 3.9 in Windows, MacOs and Linux.
 [Github](https://github.com/gdsfactory/gdsfactory/actions) runs all the tests at least once a day for different versions of python (3.7, 3.8, 3.9)
 
-If you are on Windows, I recommend you install gdsfactory with Anaconda3 or Miniconda3.
+If you are on Windows, I recommend you install gdspy with Anaconda3, Miniconda3 or [mamba](https://github.com/conda-forge/miniforge#mambaforge) (faster conda alternative) and `pip` for gdsfactory.
+I also recommend you install the gdsfactory link to klayout `gf tool install`
 
 ```
-conda install -c conda-forge gdspy
+mamba install gdspy
 pip install gdsfactory[full]
 gf tool install
 ```
 
+Mamba is a faster alternative to conda, if you don't want to install mamba, you can also replace `mamba install gdspy` with `conda install -c conda-forge gdspy`
+
+
 For Linux and MacOs you can also install gdsfactory without Anaconda3:
 
 ```
-pip install gdsfactory[pip]
+pip install gdsfactory[full]
 gf tool install
 ```
 
@@ -157,6 +155,15 @@ After installing it you should be able to `import gdsfactory as gf` from a pytho
   - tests:
 - docs/notebooks: jupyter-notebooks based tutorial
 
+## Documentation
+
+- [read online docs](https://gdsfactory.github.io/gdsfactory/)
+- [download the code](https://github.com/gdsfactory/gdsfactory)
+- run [docs/notebooks](https://gdsfactory.readthedocs.io/en/latest/notebooks.html) in [jupyterlab](https://jupyterlab.readthedocs.io/en/stable/index.html)
+- run gdsfactory/samples on your IDE (Spyder, PyCharm, VSCode)
+- play with [UBCpdk docs](https://gdsfactory.github.io/ubc/) and [code](https://github.com/gdsfactory/ubc)
+
+
 ## Plugins
 
 We try to keep gdsfactory core with minimum dependencies.
@@ -179,17 +186,21 @@ For simulating Sparameters using FDTD.
 
 Open source FDTD / mode simulator. Requires you to run
 
-```
-conda install -c conda-forge pymeep
-```
-
-or
 
 ```
-conda install -c conda-forge pymeep=*=mpi_mpich_*
+mamba install pymeep=*=mpi_mpich_*
 ```
 
-for parallel execution).
+for parallel execution (recommended)
+
+or for single core
+
+```
+mamba install pymeep
+```
+
+Mamba is a faster alternative to conda, if you don't want to install mamba, you can also replace `mamba install` with `conda install -c conda-forge`
+
 
 ### tidy3d
 
@@ -245,8 +256,9 @@ Open source heroes:
 ## Links
 
 - [gdsfactory github repo](https://github.com/gdsfactory/gdsfactory) and [docs](https://gdsfactory.github.io/gdsfactory/)
-- [gdslib](https://github.com/gdsfactory/gdslib): separate package for component circuit models (based on Sparameters).
 - [ubc PDK](https://github.com/gdsfactory/ubc): sample open source PDK from edx course.
+- [miniforge install instructions](https://github.com/conda-forge/miniforge#mambaforge)
+- [gdslib](https://github.com/gdsfactory/gdslib): separate package for component circuit models (based on Sparameters).
 - [awesome photonics list](https://github.com/joamatab/awesome_photonics)
 - [phidl (gdsfactory is based on phidl)](https://github.com/amccaugh/phidl)
 - [gdspy (phidl is based on gdspy)](https://github.com/heitzmann/gdspy)
