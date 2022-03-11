@@ -1,6 +1,7 @@
 -e .
 click
 gdspy
+GitPython
 jsondiff
 klayout
 loguru
@@ -19,6 +20,7 @@ pytest
 pytest-regressions
 qrcode
 rectpack
+rich
 scikit-image
 scipy
 semantic_version

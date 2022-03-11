@@ -4,6 +4,11 @@ import pathlib
 import shutil
 import sys
 
+import git
+from rich.progress import Progress
+
+from gdsfactory.config import CONFIG, logger
+
 
 def install_gdsdiff() -> None:
     home = pathlib.Path.home()
@@ -105,11 +110,26 @@ def install_generic_tech() -> None:
     copy(src, dest)
 
 
-if __name__ == "__main__":
-    cwd = pathlib.Path(__file__).resolve().parent
-    home = pathlib.Path.home()
-    src = cwd / "klayout" / "tech"
+def install_gdslib():
+    """Installs gdslib repo."""
 
-    install_gdsdiff()
-    install_klive()
-    install_generic_tech()
+    gdslib = CONFIG["gdslib"]
+    if not gdslib.exists():
+        with Progress(transient=True) as progress:
+            repo = "https://github.com/gdsfactory/gdslib.git"
+            print(f"git clone {repo} into {str(gdslib)!r}")
+            progress.add_task("Downloading simulations data", start=False)
+            git.Repo.clone_from(repo, gdslib, branch="data")
+    else:
+        logger.info(f"gdslib installed at {str(gdslib)!r}")
+
+
+if __name__ == "__main__":
+    # cwd = pathlib.Path(__file__).resolve().parent
+    # home = pathlib.Path.home()
+    # src = cwd / "klayout" / "tech"
+
+    # install_gdsdiff()
+    # install_klive()
+    # install_generic_tech()
+    install_gdslib()
