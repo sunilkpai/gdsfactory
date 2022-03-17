@@ -1,4 +1,4 @@
-# gdsfactory 4.4.6
+# gdsfactory 4.4.7
 
 [![docs](https://github.com/gdsfactory/gdsfactory/actions/workflows/pages.yml/badge.svg)](https://gdsfactory.github.io/gdsfactory/)
 [![pypi](https://img.shields.io/pypi/v/gdsfactory)](https://pypi.org/project/gdsfactory/)
@@ -98,6 +98,7 @@ gdsfactory is written in python and requires some basic knowledge of python. If 
 - [youTube videos](https://www.youtube.com/c/anthonywritescode)
 - courses
     - [scientific computing](https://nbviewer.org/github/jrjohansson/scientific-python-lectures/blob/master/Lecture-0-Scientific-Computing-with-Python.ipynb)
+    - [numerical python](http://jrjohansson.github.io/numericalpython.html)
     - [python](https://dabeaz-course.github.io/practical-python/Notes/01_Introduction/01_Python.html)
 
 ## Installation
