@@ -56,8 +56,8 @@ def get_klayout_path() -> pathlib.Path:
 def install_klive() -> None:
     dest_folder = get_klayout_path() / "pymacros"
     dest_folder.mkdir(exist_ok=True, parents=True)
-    cwd = pathlib.Path(__file__).resolve().parent
-    src = cwd / "klayout" / "pymacros" / "klive.lym"
+    repo = pathlib.Path(__file__).resolve().parent.parent
+    src = repo / "pymacros" / "klive.lym"
     dest = dest_folder / "klive.lym"
 
     if dest.exists():
@@ -73,7 +73,7 @@ def copy(src: pathlib.Path, dest: pathlib.Path) -> None:
     dest_folder = dest.parent
     dest_folder.mkdir(exist_ok=True, parents=True)
 
-    if dest.exists():
+    if dest.exists() or dest.is_symlink():
         print(f"removing {dest} already installed")
         if dest.is_dir():
             shutil.rmtree(dest)
@@ -93,22 +93,29 @@ def install_generic_tech() -> None:
     else:
         klayout_folder = ".klayout"
 
-    cwd = pathlib.Path(__file__).resolve().parent
     home = pathlib.Path.home()
-    src = cwd / "klayout" / "tech"
+    repo = pathlib.Path(__file__).resolve().parent.parent
+    tech = repo / "tech"
     dest = home / klayout_folder / "tech" / "generic"
 
-    copy(src, dest)
+    copy(tech, dest)
 
-    src = cwd / "klayout" / "drc" / "generic.lydrc"
+    src = repo / "pymacros" / "generic.lydrc"
     dest = home / klayout_folder / "drc" / "generic.lydrc"
+
     copy(src, dest)
 
 
 if __name__ == "__main__":
-    cwd = pathlib.Path(__file__).resolve().parent
+    if sys.platform == "win32":
+        klayout_folder = "KLayout"
+    else:
+        klayout_folder = ".klayout"
+
     home = pathlib.Path.home()
-    src = cwd / "klayout" / "tech"
+    repo = pathlib.Path(__file__).resolve().parent.parent
+    tech = repo / "tech"
+    dest = home / klayout_folder / "tech" / "generic"
 
     install_gdsdiff()
     install_klive()

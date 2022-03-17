@@ -43,7 +43,7 @@ logpath = home_path / "log.log"
 yamlpath_cwd = cwd / "config.yml"
 yamlpath_default = module_path / "config.yml"
 yamlpath_home = home_path / "config.yml"
-layer_path = module_path / "klayout" / "tech" / "layers.lyp"
+layer_path = repo_path / "tech" / "layers.lyp"
 
 dirpath_build = pathlib.Path(tempfile.TemporaryDirectory().name)
 dirpath_test = pathlib.Path(tempfile.TemporaryDirectory().name)
