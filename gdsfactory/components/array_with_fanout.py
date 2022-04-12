@@ -6,10 +6,9 @@ from gdsfactory.components.array_component import array
 from gdsfactory.components.bend_euler import bend_euler
 from gdsfactory.components.pad import pad
 from gdsfactory.components.straight import straight
-from gdsfactory.cross_section import strip
-from gdsfactory.port import auto_rename_ports
+from gdsfactory.cross_section import xs_strip
 from gdsfactory.routing.sort_ports import sort_ports_x
-from gdsfactory.types import ComponentFactory, ComponentOrFactory, CrossSectionFactory
+from gdsfactory.types import ComponentFactory, ComponentOrFactory, CrossSection
 
 
 @cell
@@ -25,8 +24,7 @@ def array_with_fanout(
     bend: ComponentFactory = bend_euler,
     bend_port_name1: Optional[str] = None,
     bend_port_name2: Optional[str] = None,
-    cross_section: CrossSectionFactory = strip,
-    **kwargs,
+    cross_section: CrossSection = xs_strip,
 ) -> Component:
     """Returns an array of components in X axis
     with fanout waveguides facing west
@@ -48,7 +46,7 @@ def array_with_fanout(
     """
     c = Component()
     component = component() if callable(component) else component
-    bend = bend(radius=radius, cross_section=cross_section, **kwargs)
+    bend = bend(radius=radius, cross_section=cross_section)
 
     bend_ports = bend.get_ports_list()
     bend_ports = sort_ports_x(bend_ports)
@@ -62,21 +60,17 @@ def array_with_fanout(
         c.add(ref)
         ylength = col * waveguide_pitch + start_straight_length
         xlength = col * pitch + end_straight_length
-        straight_ref = c << straight(
-            length=ylength, cross_section=cross_section, **kwargs
-        )
+        straight_ref = c << straight(length=ylength, cross_section=cross_section)
         port_s1, port_s2 = straight_ref.get_ports_list()
 
         straight_ref.connect(port_s2.name, ref.ports[component_port_name])
 
         bend_ref = c.add_ref(bend)
         bend_ref.connect(bend_port_name1, straight_ref.ports[port_s1.name])
-        straightx_ref = c << straight(
-            length=xlength, cross_section=cross_section, **kwargs
-        )
+        straightx_ref = c << straight(length=xlength, cross_section=cross_section)
         straightx_ref.connect(port_s2.name, bend_ref.ports[bend_port_name2])
         c.add_port(f"W_{col}", port=straightx_ref.ports[port_s1.name])
-    auto_rename_ports(c)
+    c.auto_rename_ports()
     return c
 
 

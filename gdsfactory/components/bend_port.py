@@ -3,7 +3,7 @@ from typing import Optional
 import gdsfactory as gf
 from gdsfactory.components.bend_circular import bend_circular
 from gdsfactory.components.straight_heater_metal import straight_heater_metal
-from gdsfactory.types import ComponentFactory, ComponentOrFactory, CrossSectionFactory
+from gdsfactory.types import ComponentFactory, ComponentOrFactory, CrossSection
 
 
 @gf.cell
@@ -13,11 +13,10 @@ def bend_port(
     port_name2: str = "e2",
     port_name1_bend: Optional[str] = None,
     port_name2_bend: Optional[str] = None,
-    cross_section: CrossSectionFactory = gf.cross_section.metal3,
+    cross_section: CrossSection = gf.cross_section.xs_metal3,
     bend: ComponentFactory = bend_circular,
     angle: float = 180,
     extension_length: Optional[float] = None,
-    **kwargs,
 ):
     """
     Returns a component that contains a component with a bend and a straight
@@ -32,7 +31,6 @@ def bend_port(
         bend: factory for the bend
         angle: for the bend
         extension_length: for the straight after the bend
-        kwargs: cross_section settings
 
     """
     c = gf.Component()
@@ -47,7 +45,7 @@ def bend_port(
     )
 
     ref = c << component
-    b = c << bend(angle=angle, cross_section=cross_section, **kwargs)
+    b = c << bend(angle=angle, cross_section=cross_section)
     bend_ports = b.get_ports_list()
 
     port_name1_bend = port_name1_bend or bend_ports[0].name
@@ -56,7 +54,7 @@ def bend_port(
     b.connect(port_name1_bend, ref.ports[port_name])
 
     s = c << gf.components.straight(
-        length=extension_length, cross_section=cross_section, **kwargs
+        length=extension_length, cross_section=cross_section
     )
     straight_ports = s.get_ports_list()
     o2 = straight_ports[1].name

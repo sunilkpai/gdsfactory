@@ -8,6 +8,7 @@ import numpy as np
 import orjson
 import pydantic
 import toolz
+from phidl.device_layout import Device
 from phidl.device_layout import Path as PathPhidl
 
 
@@ -22,9 +23,12 @@ def clean_dict(d: Dict[str, Any]) -> Dict[str, Any]:
 
 
 def get_string(value: Any) -> str:
-    return orjson.dumps(
-        value, option=orjson.OPT_SERIALIZE_NUMPY, default=clean_value_name
-    ).decode()
+    try:
+        value = orjson.dumps(
+            value, option=orjson.OPT_SERIALIZE_NUMPY, default=clean_value_name
+        ).decode()
+    except (TypeError, Exception) as e:
+        raise ValueError(f"Error serializing {value!r}: {e}")
 
 
 def clean_value_name(value: Any) -> str:
@@ -54,6 +58,8 @@ def clean_value_name(value: Any) -> str:
             func = func.func
         value = dict(function=func.__name__, **args_as_kwargs)
         value = get_string(value)
+    elif isinstance(value, Device):
+        value = value.name
     elif hasattr(value, "to_dict"):
         value = value.to_dict()
         value = get_string(value)
@@ -110,6 +116,8 @@ def clean_value_json(value: Any) -> Any:
         while hasattr(func, "func"):
             func = func.func
         value = dict(function=func.__name__, **args_as_kwargs)
+    elif isinstance(value, Device):
+        value = value.name
     elif hasattr(value, "to_dict"):
         value = value.to_dict()
     elif isinstance(value, np.float64):
@@ -130,10 +138,13 @@ def clean_value_json(value: Any) -> Any:
         value = copy.deepcopy(value)
         value = clean_dict(value)
     else:
-        value_json = orjson.dumps(
-            value, option=orjson.OPT_SERIALIZE_NUMPY, default=clean_value_json
-        )
-        value = orjson.loads(value_json)
+        try:
+            value_json = orjson.dumps(
+                value, option=orjson.OPT_SERIALIZE_NUMPY, default=clean_value_json
+            )
+            value = orjson.loads(value_json)
+        except (TypeError, Exception) as e:
+            raise ValueError(f"Error serializing {value!r}: {e}")
     return value
 
     # elif isinstance(value, DictConfig):

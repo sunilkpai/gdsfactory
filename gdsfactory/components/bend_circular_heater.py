@@ -23,8 +23,8 @@ def bend_circular_heater(
         angle: angle of arc (degrees)
         npoints: Number of points used per 360 degrees
         heater_to_wg_distance:
-        heater_width
-        layer_heater
+        heater_width:
+        layer_heater:
         cross_section: CrossSection to extrude the waveguide.
     """
     x = cross_section

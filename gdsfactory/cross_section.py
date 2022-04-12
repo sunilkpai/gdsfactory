@@ -577,6 +577,23 @@ def strip_heater_metal(
         heater_width: of metal heater
         layer_heater: for the metal
 
+
+    .. code::
+
+              |<-------heater_width--------->|
+               ______________________________
+              |                              |
+              |         layer_heater         |
+              |______________________________|
+
+                   |<------width------>|
+                    ____________________
+                   |                   |
+                   |                   |
+                   |       width       |
+                   |                   |
+                   |___________________|
+
     """
     x = cross_section(
         width=width,
@@ -880,6 +897,10 @@ metal3 = partial(
     metal1,
     layer=LAYER.M3,
 )
+heater = partial(
+    metal1,
+    layer=LAYER.HEATER,
+)
 
 
 xs_strip = strip()
@@ -889,6 +910,7 @@ xs_nitride = nitride()
 xs_metal1 = metal1()
 xs_metal2 = metal2()
 xs_metal3 = metal3()
+xs_heater = heater()
 xs_pin = pin()
 xs_strip_heater_metal_undercut = strip_heater_metal_undercut()
 xs_strip_heater_metal = strip_heater_metal()

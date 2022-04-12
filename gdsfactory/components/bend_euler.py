@@ -5,7 +5,7 @@ from gdsfactory.components.straight import straight
 from gdsfactory.cross_section import xs_strip
 from gdsfactory.path import euler, extrude
 from gdsfactory.snap import snap_to_grid
-from gdsfactory.types import CrossSection
+from gdsfactory.types import CrossSection, Optional
 
 
 @gf.cell
@@ -17,6 +17,7 @@ def bend_euler(
     direction: str = "ccw",
     with_cladding_box: bool = True,
     cross_section: CrossSection = xs_strip,
+    radius: Optional[float] = None,
 ) -> Component:
     """Returns an euler bend that adiabatically transitions from straight to curved.
     By default, `radius` corresponds to the minimum radius of curvature of the bend.
@@ -52,7 +53,7 @@ def bend_euler(
 
     """
     x = cross_section
-    radius = x.info["radius"]
+    radius = radius or x.info["radius"]
 
     c = Component()
     p = euler(

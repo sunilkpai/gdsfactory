@@ -62,6 +62,7 @@ def get_route(
     start_straight_length: float = 0.01,
     end_straight_length: float = 0.01,
     min_straight_length: float = 0.01,
+    radius: Optional[float] = None,
     cross_section: CrossSection = xs_strip,
 ) -> Route:
     """Returns a Manhattan Route between 2 ports
@@ -77,6 +78,7 @@ def get_route(
         start_straight_length: length of starting straight
         end_straight_length: length of end straight
         min_straight_length: min length of straight for any intermediate segment
+        radius: Optional bend radius.
         cross_section: CrossSection to extrude the waveguide.
 
 
@@ -100,7 +102,9 @@ def get_route(
     auto_widen = x.info.get("auto_widen", False)
     width2 = x.info.get("width_wide") if auto_widen else width1
 
-    bend90 = bend(cross_section=cross_section) if callable(bend) else bend
+    bend90 = (
+        bend(cross_section=cross_section, radius=radius) if callable(bend) else bend
+    )
 
     if taper:
         taper = partial(

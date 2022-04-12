@@ -4,8 +4,12 @@ import gdsfactory as gf
 from gdsfactory.cell import cell
 from gdsfactory.component import Component
 from gdsfactory.components.contact import contact_heater_m3
-from gdsfactory.cross_section import strip_heater_metal, strip_heater_metal_undercut
-from gdsfactory.types import ComponentFactory, CrossSectionFactory
+from gdsfactory.cross_section import (
+    xs_heater,
+    xs_strip_heater_metal,
+    xs_strip_heater_metal_undercut,
+)
+from gdsfactory.types import ComponentFactory, CrossSection
 
 
 @cell
@@ -14,34 +18,36 @@ def straight_heater_metal_undercut(
     length_undercut_spacing: float = 6.0,
     length_undercut: float = 30.0,
     length_straight_input: float = 15.0,
-    heater_width: float = 2.5,
-    cross_section_heater: CrossSectionFactory = strip_heater_metal,
-    cross_section_heater_undercut: CrossSectionFactory = strip_heater_metal_undercut,
+    cross_section_heater: CrossSection = xs_strip_heater_metal,
+    cross_section_heater_undercut: CrossSection = xs_strip_heater_metal_undercut,
+    cross_section_heater_metal: CrossSection = xs_heater,
     with_undercut: bool = True,
     contact: Optional[ComponentFactory] = contact_heater_m3,
     port_orientation1: int = 180,
     port_orientation2: int = 0,
     heater_taper_length: Optional[float] = 5.0,
     ohms_per_square: Optional[float] = None,
-    **kwargs,
 ) -> Component:
     """Returns a thermal phase shifter.
     dimensions from https://doi.org/10.1364/OE.27.010456
 
     Args:
-        length: of the waveguide
-        length_undercut_spacing: from undercut regions
-        length_undercut: length of each undercut section
-        length_straight_input: from input port to where trenches start
-        cross_section_heater: for heated sections
-        cross_section_heater_undercut: for heated sections with undercut
+        length: of the waveguide.
+        length_undercut_spacing: from undercut regions.
+        length_undercut: length of each undercut section.
+        length_straight_input: from input port to where trenches start.
+        cross_section_heater: for heated sections.
+        cross_section_heater_undercut: for heated sections with undercut.
+        cross_section_heater_metal: heater metal only cross_section.
         with_undercut: isolation trenches for higher efficiency
-        contact: via stack
-        port_orientation1: left via stack port orientation
-        port_orientation2: right via stack port orientation
-        heater_taper_length: minimizes current concentrations from heater to contact
-        kwargs: cross_section common settings
+        contact: via stack.
+        port_orientation1: left via stack port orientation.
+        port_orientation2: right via stack port orientation.
+        heater_taper_length: minimizes current concentrations from heater to contact.
+        ohms_per_square:
     """
+
+    heater_width = cross_section_heater.info["heater_width"]
     period = length_undercut + length_undercut_spacing
     n = int((length - 2 * length_straight_input) // period)
 
@@ -50,8 +56,6 @@ def straight_heater_metal_undercut(
     s_si = gf.components.straight(
         cross_section=cross_section_heater,
         length=length_straight_input,
-        heater_width=heater_width,
-        **kwargs,
     )
     cross_section_undercut = (
         cross_section_heater_undercut if with_undercut else cross_section_heater
@@ -59,14 +63,10 @@ def straight_heater_metal_undercut(
     s_uc = gf.components.straight(
         cross_section=cross_section_undercut,
         length=length_undercut,
-        heater_width=heater_width,
-        **kwargs,
     )
     s_spacing = gf.components.straight(
         cross_section=cross_section_heater,
         length=length_undercut_spacing,
-        heater_width=heater_width,
-        **kwargs,
     )
     symbol_to_component = {
         "-": (s_si, "o1", "o2"),
@@ -102,12 +102,11 @@ def straight_heater_metal_undercut(
             "e2", port=contact_east.get_ports_list(orientation=port_orientation2)[0]
         )
         if heater_taper_length:
-            x = cross_section_heater()
             taper = gf.components.taper(
                 width1=contactw.ports["e1"].width,
                 width2=heater_width,
                 length=heater_taper_length,
-                layer=x.info["layer_heater"],
+                cross_section=cross_section_heater_metal,
             )
             taper1 = c << taper
             taper2 = c << taper
@@ -145,11 +144,11 @@ def test_ports() -> Component:
 
 
 if __name__ == "__main__":
-    # c = test_ports()
+    kkc = test_ports()
     # c = straight_heater_metal_undercut()
     # print(c.ports['o2'].midpoint[0])
     # c.pprint_ports()
-    c = straight_heater_metal(heater_width=5, length=50.0)
+    c = straight_heater_metal(length=50.0)
     c.show()
     # scene = gf.to_trimesh(c, layer_set=gf.layers.LAYER_SET)
     # scene.show()

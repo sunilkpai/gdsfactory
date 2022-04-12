@@ -10,7 +10,7 @@ from gdsfactory.component import Component
 from gdsfactory.components.mmi1x2 import mmi1x2
 from gdsfactory.cross_section import cross_section as cross_section_function
 from gdsfactory.port import Port
-from gdsfactory.types import ComponentOrFactory, Coordinate, CrossSectionFactory, Layer
+from gdsfactory.types import ComponentOrFactory, Coordinate, CrossSection, Layer
 
 DEG2RAD = np.pi / 180
 
@@ -91,7 +91,7 @@ def extend_ports(
     port2: Optional[str] = None,
     port_type: str = "optical",
     centered: bool = False,
-    cross_section: Optional[CrossSectionFactory] = None,
+    cross_section: Optional[CrossSection] = None,
     **kwargs,
 ) -> Component:
     """Returns a new component with some ports extended
@@ -154,9 +154,7 @@ def extend_ports(
                 )
                 extension_component = gf.components.straight(
                     length=length,
-                    width=port.width,
                     cross_section=cross_section_extension,
-                    layer=port.layer,
                 )
             port_labels = list(extension_component.ports.keys())
             port1 = port1 or port_labels[0]
@@ -178,7 +176,7 @@ def test_extend_ports() -> Component:
     import gdsfactory.components as pc
 
     width = 0.5
-    xs_strip = gf.partial(gf.cross_section.strip, width=width)
+    xs_strip = gf.cross_section.xs_strip
 
     c = pc.cross(width=width, port_type="optical")
 
@@ -206,12 +204,30 @@ __all__ = ["extend_ports", "extend_port"]
 
 
 if __name__ == "__main__":
+    import gdsfactory as gf
+    import gdsfactory.components as pc
+
+    width = 0.5
+    xs_strip = gf.cross_section.xs_strip
+
+    c = pc.cross(width=width, port_type="optical")
+
+    c1 = extend_ports(component=c, cross_section=xs_strip)
+    assert len(c.ports) == len(c1.ports)
+    p = len(c1.polygons)
+    assert p == 4, p
+
+    c2 = extend_ports(component=c, cross_section=xs_strip, port_names=("o1", "o2"))
+    p = len(c2.polygons)
+    print(p)
+    c2.show()
+
     # c = extend_ports()
     # c = extend_ports(gf.components.mzi_phase_shifter_top_heater_metal)
-    c = test_extend_ports()
+    # c = test_extend_ports()
 
     # c = extend_ports(gf.components.cross(port_type="optical"))
-    c.show()
+    # c.show()
 
     # c = gf.components.bend_circular()
     # ce = extend_ports(component=c, port_names=list(c.ports.keys()) + ["hi"])

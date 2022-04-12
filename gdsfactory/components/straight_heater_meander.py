@@ -1,25 +1,26 @@
 import gdsfactory as gf
+from gdsfactory.component import Component
 from gdsfactory.components.contact import contact_heater_m3
-from gdsfactory.tech import LAYER
-from gdsfactory.types import ComponentFactory, Layer, Optional
+from gdsfactory.cross_section import xs_strip, xs_strip_heater_metal
+from gdsfactory.types import ComponentFactory, CrossSection, Optional
 
 
 @gf.cell
 def straight_heater_meander(
     length: float = 300.0,
     spacing: float = 2.0,
-    cross_section: gf.types.CrossSectionFactory = gf.cross_section.strip,
+    cross_section: CrossSection = xs_strip,
+    cross_section_wide: CrossSection = xs_strip,
+    cross_section_heater: CrossSection = xs_strip_heater_metal,
     heater_width: float = 2.5,
     extension_length: float = 15.0,
-    layer_heater: Optional[Layer] = LAYER.HEATER,
     radius: float = 5.0,
     contact: Optional[ComponentFactory] = contact_heater_m3,
     port_orientation1: int = 180,
     port_orientation2: int = 0,
     heater_taper_length: Optional[float] = 10.0,
-    straight_width: float = 0.9,
     taper_length: float = 10,
-):
+) -> Component:
     """Returns a meander based heater
     based on SungWon Chung, Makoto Nakai, and Hossein Hashemi,
     Low-power thermo-optic silicon modulator for large-scale photonic integrated systems
@@ -34,7 +35,6 @@ def straight_heater_meander(
         cross_section: for waveguide
         heater_width: for heater
         extension_length: of input and output optical ports
-        layer_heater: for top heater, if None, it does not add a heater
         radius: for the meander bends
         contact: for the heater to contact metal
         port_orientation1:
@@ -49,7 +49,7 @@ def straight_heater_meander(
     p2 = gf.Port(midpoint=(0, spacing), orientation=0)
     route = gf.routing.get_route(p1, p2, radius=radius)
 
-    cross_section1 = gf.partial(cross_section, width=straight_width)
+    cross_section1 = cross_section_wide
     cross_section2 = cross_section
 
     straight_length = gf.snap.snap_to_grid((length - (rows - 1) * route.length) / rows)
@@ -99,18 +99,13 @@ def straight_heater_meander(
     c.add_port("o1", port=straight1.ports["o1"])
     c.add_port("o2", port=straight2.ports["o2"])
 
-    if layer_heater:
-        heater_cross_section = gf.partial(
-            gf.cross_section.cross_section, width=heater_width, layer=layer_heater
-        )
+    heater = c << gf.components.straight(
+        length=straight_length,
+        cross_section=cross_section_heater,
+    )
+    heater.movey(spacing * (rows // 2))
 
-        heater = c << gf.components.straight(
-            length=straight_length,
-            cross_section=heater_cross_section,
-        )
-        heater.movey(spacing * (rows // 2))
-
-    if layer_heater and contact:
+    if contact:
         contactw = contact()
         contacte = contact()
         dx = contactw.get_ports_xsize() / 2 + heater_taper_length or 0
@@ -130,7 +125,7 @@ def straight_heater_meander(
 
         if heater_taper_length:
             taper = gf.components.taper(
-                cross_section=heater_cross_section,
+                cross_section=cross_section_heater,
                 width1=contactw.ports["e1"].width,
                 width2=heater_width,
                 length=heater_taper_length,
@@ -172,7 +167,6 @@ if __name__ == "__main__":
     # c.add_port("o2", port=straight_array.ports[f"o2_{rows}_1"])
 
     c = straight_heater_meander(
-        straight_width=0.5,
         taper_length=10
         # taper_length=10,
         # length=600,
