@@ -41,14 +41,14 @@ from gdsfactory.components.bend_euler import bend_euler
 from gdsfactory.components.straight import straight as straight_function
 from gdsfactory.components.taper import taper as taper_function
 from gdsfactory.components.wire import wire_corner
-from gdsfactory.cross_section import metal3, strip
+from gdsfactory.cross_section import metal3, xs_strip
 from gdsfactory.port import Port
 from gdsfactory.routing.manhattan import round_corners, route_manhattan
 from gdsfactory.types import (
     ComponentFactory,
     ComponentOrFactory,
     Coordinates,
-    CrossSectionOrFactory,
+    CrossSection,
     Route,
 )
 
@@ -62,8 +62,7 @@ def get_route(
     start_straight_length: float = 0.01,
     end_straight_length: float = 0.01,
     min_straight_length: float = 0.01,
-    cross_section: CrossSectionOrFactory = strip,
-    **kwargs,
+    cross_section: CrossSection = xs_strip,
 ) -> Route:
     """Returns a Manhattan Route between 2 ports
     The references are straights, bends and tapers.
@@ -96,13 +95,13 @@ def get_route(
         c.plot()
 
     """
-    x = cross_section(**kwargs) if callable(cross_section) else cross_section
+    x = cross_section
     taper_length = x.info.get("taper_length")
     width1 = input_port.width
     auto_widen = x.info.get("auto_widen", False)
     width2 = x.info.get("width_wide") if auto_widen else width1
 
-    bend90 = bend(cross_section=cross_section, **kwargs) if callable(bend) else bend
+    bend90 = bend(cross_section=cross_section) if callable(bend) else bend
 
     if taper:
         taper = partial(
@@ -111,7 +110,6 @@ def get_route(
             width1=input_port.width,
             width2=width2,
             cross_section=cross_section,
-            **kwargs,
         )
 
     return route_manhattan(
@@ -124,7 +122,6 @@ def get_route(
         min_straight_length=min_straight_length,
         bend=bend90,
         cross_section=cross_section,
-        **kwargs,
     )
 
 
@@ -144,8 +141,7 @@ def get_route_from_waypoints(
     bend: Callable = bend_euler,
     straight: Callable = straight_function,
     taper: Optional[Callable] = taper_function,
-    cross_section: CrossSectionOrFactory = strip,
-    **kwargs,
+    cross_section: CrossSection = xs_strip,
 ) -> Route:
     """Returns a route formed by the given waypoints with
     bends instead of corners and optionally tapers in straight sections.
@@ -202,13 +198,12 @@ def get_route_from_waypoints(
 
     """
 
-    x = cross_section(**kwargs) if callable(cross_section) else cross_section
+    x = cross_section
     auto_widen = x.info.get("auto_widen", False)
     width1 = x.info.get("width")
     width2 = x.info.get("width_wide") if auto_widen else width1
     taper_length = x.info.get("taper_length")
     waypoints = np.array(waypoints)
-    kwargs.pop("route_filter", "")
 
     if auto_widen:
         taper = (
@@ -217,7 +212,6 @@ def get_route_from_waypoints(
                 width1=width1,
                 width2=width2,
                 cross_section=cross_section,
-                **kwargs,
             )
             if callable(taper)
             else taper
@@ -231,7 +225,6 @@ def get_route_from_waypoints(
         straight=straight,
         taper=taper,
         cross_section=cross_section,
-        **kwargs,
     )
 
 
@@ -254,7 +247,7 @@ if __name__ == "__main__":
     route = get_route(
         p1.ports["e13"],
         p2.ports["e11"],
-        cross_section=gf.cross_section.strip(auto_widen=True, width_wide=2),
+        cross_section=gf.cross_section.strip(auto_widen=True, width_wide=4),
     )
     c.add(route.references)
 

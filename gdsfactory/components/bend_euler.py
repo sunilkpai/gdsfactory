@@ -2,10 +2,10 @@ import gdsfactory as gf
 from gdsfactory.add_padding import get_padding_points
 from gdsfactory.component import Component
 from gdsfactory.components.straight import straight
-from gdsfactory.cross_section import strip
+from gdsfactory.cross_section import xs_strip
 from gdsfactory.path import euler, extrude
 from gdsfactory.snap import snap_to_grid
-from gdsfactory.types import CrossSectionOrFactory
+from gdsfactory.types import CrossSection
 
 
 @gf.cell
@@ -16,8 +16,7 @@ def bend_euler(
     npoints: int = 720,
     direction: str = "ccw",
     with_cladding_box: bool = True,
-    cross_section: CrossSectionOrFactory = strip,
-    **kwargs
+    cross_section: CrossSection = xs_strip,
 ) -> Component:
     """Returns an euler bend that adiabatically transitions from straight to curved.
     By default, `radius` corresponds to the minimum radius of curvature of the bend.
@@ -38,8 +37,7 @@ def bend_euler(
         npoints: Number of points used per 360 degrees.
         direction: cw (clock-wise) or ccw (counter clock-wise).
         with_cladding_box: to avoid DRC acute angle errors in cladding.
-        cross_section: CrossSection or function that returns a cross_section.
-        kwargs: cross_section settings.
+        cross_section: CrossSection to extrude the waveguide.
 
 
     .. code::
@@ -53,7 +51,7 @@ def bend_euler(
 
 
     """
-    x = cross_section(**kwargs) if callable(cross_section) else cross_section
+    x = cross_section
     radius = x.info["radius"]
 
     c = Component()
@@ -115,8 +113,7 @@ def bend_straight_bend(
     npoints: int = 720,
     direction: str = "ccw",
     with_cladding_box: bool = True,
-    cross_section: CrossSectionOrFactory = strip,
-    **kwargs
+    cross_section: CrossSection = xs_strip,
 ) -> Component:
     """Sbend made of 2 euler bends and straight section in between.
 
@@ -131,7 +128,6 @@ def bend_straight_bend(
         direction: cw (clock-wise) or ccw (counter clock-wise)
         with_cladding_box: to avoid DRC acute angle errors in cladding
         cross_section:
-        kwargs: cross_section settings
 
 
     """
@@ -144,11 +140,10 @@ def bend_straight_bend(
         direction=direction,
         with_cladding_box=with_cladding_box,
         cross_section=cross_section,
-        **kwargs
     )
     b1 = c.add_ref(b)
     b2 = c.add_ref(b)
-    s = c << straight(length=straight_length, cross_section=cross_section, **kwargs)
+    s = c << straight(length=straight_length, cross_section=cross_section)
     s.connect("o1", b1.ports["o2"])
     b2.mirror()
     b2.connect("o1", s.ports["o2"])

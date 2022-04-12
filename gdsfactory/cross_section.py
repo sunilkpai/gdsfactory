@@ -111,7 +111,7 @@ class CrossSection(BaseModel):
         self.sections.append(new_segment)
         return self
 
-    def copy(self):
+    def copy(self, width: Optional[float] = None):
         """Return a copy of the CrossSection"""
         X = CrossSection()
         X.info = self.info.copy()
@@ -119,6 +119,8 @@ class CrossSection(BaseModel):
         X.ports = tuple(sorted(list(self.ports)))
         X.aliases = dict(self.aliases)
         X.port_types = tuple(self.port_types)
+        if width:
+            X.aliases["_default"]["width"] = width
         return X
 
     @classmethod
@@ -880,18 +882,18 @@ metal3 = partial(
 )
 
 
-# xs_strip = strip()
-# xs_strip_auto_widen = strip_auto_widen()
-# xs_rib = rib()
-# xs_nitride = nitride()
-# xs_metal1 = metal1()
-# xs_metal2 = metal2()
-# xs_metal3 = metal3()
-# xs_pin = pin()
-# xs_strip_heater_metal_undercut = strip_heater_metal_undercut()
-# xs_strip_heater_metal = strip_heater_metal()
-# xs_strip_heater_doped = strip_heater_doped()
-# xs_rib_heater_doped = rib_heater_doped()
+xs_strip = strip()
+xs_strip_auto_widen = strip_auto_widen()
+xs_rib = rib()
+xs_nitride = nitride()
+xs_metal1 = metal1()
+xs_metal2 = metal2()
+xs_metal3 = metal3()
+xs_pin = pin()
+xs_strip_heater_metal_undercut = strip_heater_metal_undercut()
+xs_strip_heater_metal = strip_heater_metal()
+xs_strip_heater_doped = strip_heater_doped()
+xs_rib_heater_doped = rib_heater_doped()
 
 
 cross_section_factory = dict(

@@ -4,9 +4,9 @@ import gdsfactory as gf
 from gdsfactory.add_padding import get_padding_points
 from gdsfactory.cell import cell
 from gdsfactory.component import Component
-from gdsfactory.cross_section import strip
+from gdsfactory.cross_section import xs_strip
 from gdsfactory.port import Port
-from gdsfactory.types import CrossSectionOrFactory, Layer
+from gdsfactory.types import CrossSection, Layer
 
 
 @cell
@@ -16,8 +16,7 @@ def taper(
     width2: Optional[float] = None,
     port: Optional[Port] = None,
     with_cladding_box: bool = True,
-    cross_section: CrossSectionOrFactory = strip,
-    **kwargs
+    cross_section: CrossSection = xs_strip,
 ) -> Component:
     """Linear taper.
 
@@ -29,12 +28,10 @@ def taper(
         width2: width of the east port
         port: can taper from a port instead of defining width1
         with_cladding_box: to avoid DRC acute angle errors in cladding
-        cross_section:
-        kwargs: cross_section settings
+        cross_section: CrossSection to extrude the waveguide.
 
     """
-    x = cross_section(**kwargs) if callable(cross_section) else cross_section
-
+    x = cross_section
     layers_cladding = x.info["layers_cladding"]
     layer = x.info["layer"]
 
@@ -46,11 +43,8 @@ def taper(
     y1 = width1 / 2
     y2 = width2 / 2
 
-    kwargs.update(width=width1)
-    x1 = cross_section(**kwargs) if callable(cross_section) else cross_section
-
-    kwargs.update(width=width2)
-    x2 = cross_section(**kwargs) if callable(cross_section) else cross_section
+    x1 = x.copy(width=width1)
+    x2 = x.copy(width=width2)
 
     xpts = [0, length, length, 0]
     ypts = [y1, y2, -y2, -y1]
@@ -103,7 +97,7 @@ def taper_strip_to_ridge(
     layer_slab: Layer = gf.LAYER.SLAB90,
     layers_cladding: Optional[Tuple[Layer, ...]] = None,
     cladding_offset: float = 3.0,
-    cross_section: CrossSectionOrFactory = strip,
+    cross_section: CrossSection = xs_strip,
 ) -> Component:
     r"""Linear taper from strip to rib
 
@@ -133,11 +127,6 @@ def taper_strip_to_ridge(
                      \__________________________
 
     """
-    cross_section = (
-        gf.partial(cross_section, width=width1)
-        if callable(cross_section)
-        else cross_section
-    )
 
     taper_wg = taper(
         length=length,
