@@ -77,8 +77,7 @@ def get_route(
         start_straight_length: length of starting straight
         end_straight_length: length of end straight
         min_straight_length: min length of straight for any intermediate segment
-        cross_section:
-        kwargs: cross_section settings
+        cross_section: CrossSection to extrude the waveguide.
 
 
     .. plot::
@@ -155,8 +154,7 @@ def get_route_from_waypoints(
         bend: function that returns bends
         straight: function that returns straight waveguides
         taper: function that returns tapers
-        cross_section:
-        kwargs: cross_section settings
+        cross_section: CrossSection to extrude the waveguide.
 
     .. plot::
         :include-source:

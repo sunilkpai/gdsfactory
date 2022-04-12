@@ -20,7 +20,7 @@ def straight(
         length: straight length (um).
         npoints: number of points.
         with_cladding_box: box in layers_cladding to avoid DRC sharp edges.
-        cross_section: CrossSection or function that returns a cross_section.
+        cross_section: CrossSection to extrude the waveguide.
 
     .. code::
 
